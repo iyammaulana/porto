@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import photo from "../../public/norma.jpeg";
 import Robot from "./Robot";
 
 gsap.registerPlugin(useGSAP);
@@ -32,8 +34,13 @@ export default function Portrait() {
   return (
     <figure ref={root} className="portrait">
       <div className="portrait-frame">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="portrait-img" src="/portrait.jpg?v=2" width={760} height={950} alt="Norma Irkham Maulana" />
+        <Image
+          className="portrait-img"
+          src={photo}
+          alt="Norma Irkham Maulana"
+          sizes="(max-width: 1068px) 100vw, 340px"
+          priority
+        />
         <span className="indicate" aria-hidden="true">
           <span className="indicate-tag mono">person</span>
         </span>

@@ -41,6 +41,9 @@ export default function SplitHeading({
               ease: "expo.out",
               stagger: split === "chars" ? 0.025 : 0.08,
               scrollTrigger: immediate ? undefined : { trigger: el, start: "top 88%", once: true },
+              // The line masks clip anything below a tight line box (underlines,
+              // descenders). Once the text has risen in, put the original markup back.
+              onComplete: () => self.revert(),
             });
           },
         });

@@ -1,133 +1,192 @@
-# Design System — Portofolio Norma Irkham Maulana
+# Design System v2 — Portofolio Norma Irkham Maulana
 
-Status: **draft, menunggu persetujuan**. Semua halaman dan konten wajib mengikuti dokumen ini. Kalau ada kasus yang tidak tercakup, tambahkan aturannya di sini dulu, baru bangun.
+Status: **v2, branch `v2`**. Ukuran, spacing, warna, area klik, dan gerak mengikuti **Apple Human Interface Guidelines (HIG)**. Identitas (konsep, font, larangan AI slop, copywriting) tetap dari v1.
+
+Semua halaman dan konten wajib mengikuti dokumen ini. Semua nilai di CSS memakai token di bawah. Nilai px mentah di luar blok token butuh alasan tertulis di sini. Kalau ada kasus yang tidak tercakup, tambahkan aturannya di sini dulu, baru bangun.
 
 ---
 
 ## 1. Konsep: "Process Registry"
 
-Pekerjaan Norma: merancang, membangun, dan menjaga robot UiPath di production, plus web app, integrasi, dan AI gateway di sekitarnya. Dalam pekerjaan itu, setiap otomasi dikelola sebagai **process**: punya trigger, jadwal, robot yang menjalankannya, jalur exception, dan status. Itulah yang dilihat seorang RPA engineer setiap hari di Orchestrator, dan itu juga cara ia mendokumentasikan solusi (Solution Design Document).
+Pekerjaan Norma: merancang, membangun, dan menjaga robot UiPath di production, plus web app, integrasi, dan AI gateway di sekitarnya. Setiap otomasi dikelola sebagai **process**: punya trigger, jadwal, robot yang menjalankannya, jalur exception, dan status. Itu yang dilihat RPA engineer setiap hari di Orchestrator, dan begitu juga cara ia mendokumentasikan solusi (Solution Design Document).
 
-Web ini meminjam dua hal itu, tanpa meniru tampilan atau warna UiPath:
-
-- **Halaman utama = daftar process.** Setiap sistem yang dibangun tampil sebagai satu baris: nama, trigger, jadwal, sejak kapan di production, hasil. Seperti daftar process yang di-deploy, bukan galeri kartu.
-- **Halaman project = solution design.** Strukturnya mengikuti cara RPA engineer menjelaskan solusi: trigger, input, langkah process, penanganan exception (business vs system), output, hasil.
-
-Konsekuensi lain:
-
-- Web dibaca seperti **CV panjang**, dari atas ke bawah. Tidak ada hero, tidak ada CTA berulang, tidak ada "section penjualan".
-- Urutan halaman utama mengikuti CV: kop, ringkasan, pengalaman, process yang dibangun, keahlian, sertifikasi, pendidikan, kontak.
-
-### Primitive tanda tangan: baris process
-
-Satu bentuk diulang terus sampai menjadi identitas web: **baris tabel bergaris**, kolom tetap, angka rata kanan, status sebagai teks monospace.
-
-```
-PROCESS                          TRIGGER        RUNS          SINCE   MANUAL → AUTO
-──────────────────────────────────────────────────────────────────────────────────
-Dispute Resolution System        Portal poll    24/7          2023    60 → 5–10 min
-Core Banking Realtime            API + queue    On request    2023    30 → 10 min
-Visa settlement                  Schedule       Daily         2023    60 → 10 min
-BI-Fast reconciliation           Schedule       Every 15 min  2022    —
-```
-
-Daftar process, angka dampak, pengalaman, sertifikasi: semua memakai primitive ini. Tidak ada kartu.
+- **Halaman utama = daftar process.** Setiap sistem tampil sebagai satu baris: nama, trigger, jadwal, sejak kapan di production, hasil.
+- **Halaman project = solution design.** Trigger, input, langkah process, exception handling (business vs system), output, hasil.
+- Web dibaca seperti **CV panjang**, dari atas ke bawah. Tidak ada CTA berulang atau "section penjualan".
+- Tidak meniru tampilan atau warna oranye UiPath.
 
 ---
 
 ## 2. Tipografi
 
+### Font
+
 | Peran | Font | Alasan |
 |---|---|---|
-| Display: nama, judul project, angka besar | **IBM Plex Sans Condensed** 600 | Gaya editorial ala Awwwards: huruf raksasa yang rapat. Tetap satu keluarga Plex, jadi tidak ada pasangan font acak. |
-| Teks & judul kecil | **IBM Plex Sans** | Netral dan teknis, bukan font default AI (Inter, Geist, Space Grotesk). Kebetulan satu keluarga dengan IBM AS400, salah satu sistem yang diotomasi Norma. |
-| Angka, trigger, jadwal, status, nama teknis | **IBM Plex Mono** | Bahasa visual log robot dan konfigurasi Orchestrator. |
+| Display: nama, judul section, judul project, angka besar | **IBM Plex Sans Condensed** 600 | Editorial dan rapat. Satu keluarga Plex. |
+| Teks | **IBM Plex Sans** 400 / 600 | Bukan font default AI. Satu keluarga dengan IBM AS400 yang diotomasi Norma. |
+| Angka, trigger, jadwal, status, kode | **IBM Plex Mono** 400 / 600 | Bahasa visual log robot dan Orchestrator. |
+
+SF Pro (font Apple) tidak dipakai sebagai web font karena lisensinya hanya untuk aplikasi di platform Apple. Fallback stack tetap menyertakan `-apple-system` sehingga perangkat Apple jatuh ke SF bila Plex gagal dimuat.
+
+### Skala ukuran
+
+Diambil dari text styles iOS di HIG (ukuran default "Large"). Satu-satunya tambahan: tiga ukuran display untuk judul web.
+
+| Token | Gaya Apple | Ukuran | Tinggi baris | Pakai untuk |
+|---|---|---|---|---|
+| `--t-caption2` | Caption 2 | 11 | 13 | Label kecil di atas gambar (tag `person`). Ukuran minimum. |
+| `--t-caption1` | Caption 1 | 12 | 16 | Eyebrow, meta, index, caption, kode selector |
+| `--t-footnote` | Footnote | 13 | 18 | Top bar, link sekunder, nilai di bar, process log |
+| `--t-subhead` | Subhead | 15 | 20 | Tabel, baris kompresi, stack, tab |
+| `--t-callout` | Callout | 16 | 21 | Angka "sebelum" di hasil project |
+| `--t-body` | Body | 17 | 25* | Semua teks berjalan. Default. |
+| `--t-title3` | Title 3 | 20 | 25 | Tagline, ringkasan project, judul keputusan |
+| `--t-title2` | Title 2 | 22 | 28 | Cadangan |
+| `--t-title1` | Title 1 | 28 | 34 | Judul entri pengalaman |
+| `--t-large` | Large Title | 34 | 41 | Batas bawah semua ukuran display |
+| `--t-display-s` | (web) | 34–48 fluid | 1.0 | Judul baris process, angka hasil project |
+| `--t-display-m` | (web) | 34–64 fluid | 0.95 | Judul section, email kontak, judul "next" |
+| `--t-display-l` | (web) | 48–96 fluid | 0.95 | Nama, judul project, angka kompresi |
+
+\* HIG memakai 22pt untuk body di UI aplikasi. Untuk paragraf panjang di web dipakai 25px (1.47), sama dengan apple.com.
 
 Aturan:
 
-- Semua angka memakai `font-variant-numeric: tabular-nums` dan rata kanan di tabel.
-- Skala teks tetap, tidak ada ukuran di luar daftar ini:
-  `12 / 14 / 16 / 20 / 28 / 40 px`. Body 16px, line-height 1.6.
-- Skala display (hanya Plex Sans Condensed, fluid):
-  `display-m: clamp(40px, 6vw, 80px)` untuk judul section dan baris process,
-  `display-l: clamp(56px, 11vw, 168px)` untuk nama dan judul project. Line-height 0.9, letter-spacing -0.02em.
-- Judul memakai **sentence case**. Huruf kapital semua hanya untuk nilai sistem literal (`RUNNING`, `FAULTED`, `ROBOT`).
-- Tidak ada kata miring sebagai aksen di judul. Tidak ada teks gradien.
-- Berat font hanya 400 dan 600.
+- Tidak ada ukuran di luar tabel ini. Minimum 11px (batas HIG iOS).
+- Berat hanya 400 dan 600. HIG melarang Ultralight, Thin, dan Light.
+- Semua angka memakai `tabular-nums` dan rata kanan di tabel.
+- Judul memakai sentence case. Huruf kapital semua hanya untuk nilai sistem literal (`RUNNING`, `ROBOT`, `BUSINESS`).
+- Tidak ada kata miring sebagai aksen dan tidak ada teks gradien.
+
+---
 
 ## 3. Warna
 
-Mengikuti setting perangkat: terang atau gelap (`prefers-color-scheme`). Palet terang di bawah adalah acuan; palet gelap hanya membalik nilai yang sama, tanpa menambah warna, glow, atau efek baru.
+Peran semantik ala Apple (label, secondary label, separator, background, link). Mengikuti setting perangkat lewat `prefers-color-scheme`. Warna sistem memakai varian **increased contrast** dari HIG supaya lolos kontras untuk teks.
 
-| Token | Gelap |
+| Token | Peran Apple | Terang | Gelap | Pakai untuk |
+|---|---|---|---|---|
+| `--bg` | systemBackground | `#FFFFFF` | `#000000` | Latar halaman |
+| `--bg-2` | secondarySystemBackground | `#F2F2F7` | `#1C1C1E` | Latar foto saat dimuat |
+| `--label` | label | `#000000` | `#FFFFFF` | Teks utama, garis kepala section |
+| `--label-2` | secondary text | `#6E6E73` | `#98989D` | Teks sekunder, meta, kolom tabel |
+| `--label-3` | systemGray | `#8E8E93` | `#636366` | Hanya non-teks (outline, ikon). Tidak lolos kontras untuk teks kecil. |
+| `--separator` | opaqueSeparator | `#C6C6C8` | `#38383A` | Garis tabel dan pemisah |
+| `--link` | systemBlue (increased contrast) | `#1E6EF4` | `#5CB8FF` | Tautan, fokus, kotak sorot potret, aktor `HUMAN` |
+| `--success` | systemGreen (increased contrast) | `#008932` | `#4AD968` | Angka otomatis, status `RUNNING` |
+| `--error` | systemRed (increased contrast) | `#E9152D` | `#FF6165` | Angka manual, garis putus-putus "sebelum" |
+
+Kontras (HIG = WCAG AA):
+
+| Teks | Minimum |
 |---|---|
-| `--paper` | `#15171B` |
-| `--ink` | `#E8E6E1` |
-| `--ink-2` | `#9A9EA6` |
-| `--rule` | `#2C2F35` |
-| `--link` | `#8EA8F0` |
-| `--faulted` | `#E07A70` |
-| `--success` | `#6CC38D` |
+| Sampai 17px | 4.5:1 |
+| 18px ke atas, atau tebal | 3:1 |
 
-Palet terang:
-
-| Token | Nilai | Pakai untuk |
-|---|---|---|
-| `--paper` | `#F6F4EF` | Latar halaman |
-| `--ink` | `#16181D` | Teks utama |
-| `--ink-2` | `#5A5F69` | Teks sekunder, label kolom |
-| `--rule` | `#D9D5CC` | Garis tabel, pemisah |
-| `--link` | `#1D3F9E` | Tautan dan fokus. Satu-satunya warna aksen. |
-| `--faulted` | `#A3261B` | Hanya status `FAULTED` / `EXCEPTION` dan angka manual |
-| `--success` | `#1F6B3A` | Hanya status `SUCCESSFUL` / `RUNNING` dan angka otomatis |
+Semua token teks di atas sudah dicek ≥ 4.5:1 terhadap `--bg` masing-masing mode.
 
 Aturan:
 
-- Merah dan hijau adalah warna status job robot, **hanya** dipakai pada status atau angka, tidak pernah sebagai latar, ikon, atau dekorasi.
-- Tidak meniru oranye UiPath atau elemen merek pihak lain.
+- Biru adalah satu-satunya warna aksen. Merah dan hijau hanya untuk angka sebelum/sesudah dan status.
+- Warna tidak pernah jadi satu-satunya penanda (HIG). Angka manual juga dicoret atau diberi label, status juga ditulis sebagai teks.
 - Tidak ada gradien, glow, blur, glassmorphism, atau bayangan.
-- Kontras teks minimal WCAG AA.
 
-## 4. Layout
+---
 
-- Rata kiri. Tidak ada blok teks rata tengah.
-- Satu kolom teks maksimal **680px**. Tabel process boleh melebar sampai **1040px**.
-- Jarak vertikal hanya kelipatan 8: `8 / 16 / 24 / 40 / 64 / 96`.
-- Struktur dibentuk oleh **garis 1px** (`--rule`), bukan kotak, kartu, atau latar berwarna.
-- Sudut **0px** di semua elemen. Tidak ada border berwarna di satu sisi.
-- Label section di kiri, isi di kanan (gaya CV dua kolom) di layar ≥ 900px; ditumpuk di layar kecil.
-- Di HP, tabel process boleh digulir horizontal di dalam wadahnya sendiri; halaman tidak pernah ikut tergulir ke samping.
+## 4. Spacing, ukuran, dan layout
+
+### Spacing: grid 8 poin
+
+| Token | px | Contoh pakai |
+|---|---|---|
+| `--s-1` | 4 | Jarak judul–meta, sel unit orang |
+| `--s-2` | 8 | Jarak kecil dalam komponen |
+| `--s-3` | 12 | Padding baris tabel |
+| `--s-4` | 16 | Antar paragraf, gutter HP |
+| `--s-5` | 24 | Antar elemen dalam section, gutter tablet |
+| `--s-6` | 32 | Antar keputusan |
+| `--s-7` | 40 | Kepala section ke isi, gutter desktop |
+| `--s-8` | 48 | Padding section project |
+| `--s-9` | 64 | Padding hero |
+| `--s-10` | 80 | Kolom index section |
+| `--s-11` | 96 | Padding section besar |
+| `--s-12` | 120 | Jarak antar section beranda |
+
+Tidak ada jarak di luar daftar ini.
+
+### Lebar
+
+| Token | Nilai | Asal |
+|---|---|---|
+| `--w-page` | 980px | Lebar konten apple.com |
+| `--w-text` | 692px | Lebar baca paragraf (~70 karakter di 17px) |
+| `--gutter` | 40 / 24 / 16px | Desktop / tablet / HP |
+
+### Breakpoint (apple.com)
+
+| Nama | Lebar | Perubahan |
+|---|---|---|
+| Large | > 1068px | Layout penuh |
+| Medium | ≤ 1068px | Hero dan kepala kompresi jadi satu kolom, link top bar disembunyikan |
+| Small | ≤ 734px | Semua dua kolom ditumpuk, gutter 16px |
+
+Layout mengikuti lebar layar, bukan jenis perangkat (HIG).
+
+### Ukuran area klik
+
+| Perangkat | Minimum | Sumber |
+|---|---|---|
+| Layar sentuh (`pointer: coarse`) | 44 × 44px | HIG iOS |
+| Mouse / trackpad | 28 × 28px | HIG macOS |
+
+Berlaku untuk link top bar, link hero, tab, tombol tutup dialog, caption sertifikat, dan link kembali di halaman project. Token: `--target`.
+
+### Aturan layout lain
+
+- Rata kiri. Elemen terpenting di kiri atas (HIG).
+- Struktur dibentuk garis 1px (`--hairline`, `--separator`), bukan kartu atau latar berwarna.
+- Sudut 0px di semua elemen. Ini pilihan identitas, berbeda dari sudut membulat Apple.
+- Tabel lebar boleh digulir horizontal di wadahnya sendiri; halaman tidak pernah ikut tergulir ke samping.
+
+---
 
 ## 5. Komponen yang diizinkan
 
 Hanya ini. Komponen baru harus ditambahkan ke daftar ini dulu.
 
-1. **Kop**: nama, jabatan, lokasi, kontak dalam satu blok rata kiri, seperti kop CV.
-2. **Baris process**: tabel bergaris dengan kolom tetap (process, trigger, jadwal, sejak, hasil). Primitive utama.
-3. **Memo**: paragraf teks biasa dengan label kiri (Konteks, Peran, Keputusan).
-4. **Process log**: blok monospace statis berisi langkah alur dengan kolom aktor (`ROBOT` / `HUMAN` / `SYSTEM`). Menggantikan diagram alur bernomor.
-5. **Status**: teks monospace `RUNNING` / `SUCCESSFUL` / `FAULTED` / `PENDING`, berwarna teks saja.
+1. **Kop**: nama, jabatan, perusahaan, lokasi, kontak.
+2. **Baris process**: daftar process dengan kolom tetap (nama, jenis, trigger, jadwal, sejak, hasil).
+3. **Memo**: paragraf dengan label kiri (Context, What I built, Decisions).
+4. **Process log**: langkah alur dengan kolom aktor (`ROBOT` / `HUMAN` / `SYSTEM`).
+5. **Status**: teks monospace `RUNNING` / `PILOT`, berwarna teks saja.
 6. **Tautan**: teks `--link` bergaris bawah. Tautan keluar diberi `↗`. Tidak ada tombol pill.
-7. **Gambar sertifikat**: thumbnail berbingkai garis 1px, dibuka penuh dalam dialog (Radix Dialog).
-8. **Kompresi waktu**: daftar bar horizontal per process, skala 60 menit = lebar penuh. Garis putus-putus = waktu manual, bar penuh = waktu otomatis.
-9. **Potret "indicate element"**: foto Norma hitam-putih berbingkai 1px, dengan kotak sorot biru di wajah dan caption berupa selector UiPath (`<webctrl tag='PERSON' ... />`, "✓ Selector valid · 1 match"). Foto dipotong di server sehingga orang lain di foto asli tidak pernah terkirim ke browser.
-10. **Cuplikan log**: panel kecil yang mengikuti kursor saat hover baris process (hanya perangkat dengan mouse).
-11. **Tabs**: memilih process log bila satu project punya lebih dari satu alur (Radix Tabs).
-12. **Robot**: satu ikon kepala robot bergaris (persegi, dua mata, antena), tanpa sudut membulat, warna `--ink`. Hanya dipakai di tiga tempat: caption selector di potret (16px, berkedip sesekali), penanda aktor `ROBOT` di process log (14px), dan favicon. Tidak ada maskot, ilustrasi, atau robot di tempat lain.
+7. **Sertifikat**: thumbnail berbingkai 1px, dibuka penuh dalam dialog (Radix Dialog).
+8. **Kompresi waktu**: bar per process, 60 menit = lebar penuh. Garis putus-putus = manual, bar penuh = otomatis.
+9. **Kompresi orang**: satu kotak per orang. Garis putus-putus = tidak dibutuhkan lagi, penuh = tetap di process.
+10. **Potret "indicate element"**: foto Norma berwarna, bingkai 1px, kotak sorot biru di wajah, caption berupa selector UiPath. Yang dipakai adalah `public/norma.jpeg`, foto yang sudah dipotong Norma sendiri (3:4), sehingga orang lain di foto asli tidak ikut. Foto asli tidak pernah di-commit.
+11. **Cuplikan log**: panel yang mengikuti kursor saat hover baris process (hanya perangkat dengan mouse).
+12. **Tabs**: memilih process log bila satu project punya lebih dari satu alur (Radix Tabs).
+13. **Robot**: satu ikon kepala robot bergaris. Hanya di caption potret (16px), penanda aktor `ROBOT` (14px), dan favicon.
 
-Ditolak: **peta sistem** (jalur antar sistem per project). Membuat project terlihat lebih sederhana dari aslinya.
+Ditolak:
 
-## 6. Yang dilarang (daftar anti AI slop)
+- **Peta sistem** (jalur antar sistem per project): membuat project terlihat lebih sederhana dari aslinya.
+- **Panel jadwal** di hero: gimmick, tidak menjelaskan Norma.
+
+---
+
+## 6. Yang dilarang (anti AI slop)
 
 Visual:
 
 - Mode gelap permanen, latar grid, gradien, glow, blob, bayangan lembut.
-- Kartu dengan border tipis + radius + shadow yang sama di mana-mana.
-- Bento grid, deretan kartu fitur 3 kolom dengan ikon di atas.
+- Kartu dengan border + radius + shadow yang sama di mana-mana.
+- Bento grid, kartu fitur 3 kolom dengan ikon di atas.
 - Badge/pill di atas H1, titik "status online" berkedip.
 - Baris statistik besar (stat banner) di bawah hero.
-- Langkah bernomor `01 02 03` dalam lingkaran.
-- Fade-up generik di setiap blok, efek mengetik, kursor berkedip, hover yang mengangkat elemen. (Gerak yang diizinkan diatur di bagian 9.)
+- Langkah bernomor dalam lingkaran.
+- Fade-up generik di setiap blok, efek mengetik, kursor berkedip, hover yang mengangkat elemen.
 - Emoji dan ikon dekoratif.
 
 Struktur:
@@ -135,98 +194,109 @@ Struktur:
 - Pola landing page: hero → stats → fitur → testimoni → CTA.
 - Tombol CTA berulang ("Get in touch", "Let's talk").
 
+---
+
 ## 7. Aturan copywriting
 
-Bahasa situs: Inggris. Suara: orang pertama, lugas, seperti engineer menjelaskan ke engineer lain.
+Bahasa situs: Inggris. Orang pertama, lugas, seperti engineer menjelaskan ke engineer lain.
 
 Wajib:
 
-- **Setiap klaim punya angka atau nama sistem.** "Cut Visa settlement from 60 to 10 minutes", bukan "streamlined settlement".
-- **Kata kerja lampau dan konkret**: built, parsed, replaced, posted, reconciled.
-- Judul section adalah **label**, bukan slogan: "Experience", "Systems", bukan "Systems that close the loop".
-- Maksimal ~25 kata per kalimat. Satu ide per kalimat.
-- Sebut batas peran dengan jujur saat relevan (siapa membangun bagian lain).
+- Setiap klaim punya angka atau nama sistem.
+- Kata kerja lampau dan konkret: built, parsed, replaced, posted, reconciled.
+- Judul section adalah label, bukan slogan.
+- Maksimal ~25 kata per kalimat.
+- Sebut batas peran dengan jujur saat relevan.
+- Konten hanya dari CV, sertifikat, dokumen project, dan hal yang sudah dikonfirmasi Norma.
 
 Dilarang:
 
-- Em dash (—) di kalimat. Pakai titik atau koma. (Rentang angka pakai en dash: 5–10.)
-- Pola "not just X, but Y" / "doesn't just X, it Y" / "X, not Y" sebagai pembuka.
+- Em dash (—) di kalimat. Rentang angka pakai en dash: 5–10.
+- Pola "not just X, but Y" / "doesn't just X" / "X, not Y".
 - Formula "I turn X into Y", "I help companies…", "passionate about…".
-- Pertanyaan retoris sebagai judul ("Have a process that still takes hours?").
-- Rangkaian tiga kata sifat ("fast, reliable, and scalable").
+- Pertanyaan retoris sebagai judul.
+- Rangkaian tiga kata sifat.
 - Kata: seamless, robust, leverage, cutting-edge, delve, landscape, journey, empower, unlock, elevate, game-changer, passionate, innovative, crucial, pivotal.
-- Ajakan menjual di akhir section.
 
 Uji sebelum menerbitkan teks:
 
-1. Apakah kalimat ini masih benar kalau nama Norma diganti orang lain? Kalau ya, terlalu generik. Tulis ulang dengan fakta spesifik.
-2. Apakah ada angka, nama sistem, atau keputusan teknis? Kalau tidak, hapus atau isi.
-3. Hitung em dash. Harus nol.
+1. Masih benar kalau nama Norma diganti orang lain? Kalau ya, terlalu generik.
+2. Ada angka, nama sistem, atau keputusan teknis? Kalau tidak, hapus atau isi.
+3. Jumlah em dash harus nol.
+
+---
 
 ## 8. Struktur halaman
 
-### Halaman utama (`/`)
+### Beranda (`/`)
 
-1. Kop: nama, jabatan, perusahaan, lokasi, email, LinkedIn, unduh CV.
-2. Ringkasan: 2–3 kalimat faktual.
-3. Pengalaman: Bank Mega, Hackathon ICStar.
-4. Process yang dibangun: semua project sebagai baris process, tautan ke halaman solution design.
-5. Keahlian: tabel dua kolom (kategori, daftar), teks biasa.
-6. Sertifikasi & pendidikan.
-7. Kontak: satu baris email dan LinkedIn.
+1. Hero: nama (Title 1, 28px) dan jabatan di atas; headline "I turn ~~hours~~ of banking operations into minutes." sebagai teks terbesar (pengecualian yang disetujui Norma untuk larangan formula "I turn X into Y", karena didukung angka 1–2 h → 3–10 min) ("hours" abu-abu dan dicoret, "minutes" bergaris bawah, tanpa warna aksen); deskripsi; baris bukti; baris fokus; link kontak; potret di kanan. Nama sengaja tidak dibuat raksasa: yang paling besar adalah pesan dan buktinya.
+2. Kompresi waktu.
+3. Kompresi orang.
+4. Processes I built.
+5. Experience (termasuk pendidikan).
+6. Skills.
+7. Certifications.
+8. Contact.
 
-### Solution design (`/projects/[slug]`)
+### Halaman project (`/projects/[slug]`)
 
-Urutan tetap untuk semua project, mengikuti cara RPA engineer mendokumentasikan solusi:
+1. Header: jenis, sejak, status, judul, ringkasan.
+2. Hasil: manual → otomatis.
+3. Specification.
+4. Context.
+5. What I built.
+6. Robots (bila ada).
+7. Process log.
+8. Exception handling.
+9. Decisions.
+10. Scope (bila ada).
+11. Stack.
+12. Next process.
 
-1. Header: judul, peran, sejak kapan di production, status.
-2. Ringkasan satu paragraf.
-3. Spesifikasi: trigger, jadwal, input, output, robot yang terlibat (tabel dua kolom).
-4. Hasil: baris Manual → Otomatis.
-5. Konteks: masalah sebelum otomasi.
-6. Process log: alur langkah dengan aktor.
-7. Exception handling: business exception vs system exception, dan apa yang terjadi saat gagal.
-8. Keputusan teknis.
-9. Stack: daftar teks dipisah titik tengah ( · ).
-10. Navigasi: sebelumnya / berikutnya.
+---
 
 ## 9. Gerak (motion)
 
-Acuan: portofolio pemenang Awwwards (smooth scroll berbobot, tipografi kinetik, section yang di-pin saat scroll). Pembedanya: **setiap gerak di web ini membawa data atau urutan nyata dari pekerjaan Norma.** Gerak yang hanya dekorasi tidak dipakai.
-
-Yang diizinkan:
+HIG: gerak harus punya tujuan, singkat, tidak memaksa orang menunggu, dan opsional. Di web ini setiap gerak membawa data atau urutan nyata dari pekerjaan Norma.
 
 | Gerak | Data yang dibawa |
 |---|---|
-| Nama muncul per huruf saat halaman dibuka (sekali) | Identitas. Satu-satunya gerak dekoratif, dibatasi di kop. |
-| Judul section muncul per baris saat masuk layar | Penanda pindah section. Hanya judul, tidak pernah paragraf atau kartu. |
-| **Kompresi waktu**: saat section terlihat, bar setiap process menyusut dari durasi manual ke durasi otomatis, angkanya ikut turun. Diputar sekali berbasis waktu (bukan posisi scroll), jadi selalu selesai | Angka manual → otomatis yang asli dari setiap project. Momen tanda tangan web ini. |
+| Headline hero muncul per baris saat halaman dibuka (sekali) | Pesan utama: waktu proses dari jam ke menit. |
+| Judul section muncul per baris saat masuk layar | Penanda pindah section. Hanya judul. |
+| Potret: foto terbuka, kotak sorot muncul di wajah, baris selector muncul, lalu "✓ Selector valid" (sekali) | Cara robot UiPath mengenali elemen di layar. |
+| Kompresi waktu dan orang: bar menyusut / kotak mengosong, angka turun (sekali, berbasis waktu) | Angka manual → otomatis asli dari setiap project. |
+| Hover baris process memunculkan cuplikan log | Langkah robot yang sebenarnya. |
+| Langkah process log menyala berurutan saat discroll | Urutan eksekusi robot. |
+| Mata robot berkedip tiap ~5 detik | Gerak "karakter" satu-satunya, sekecil mungkin. |
 
-Aturan tambahan: **animasi yang menampilkan angka tidak boleh terikat posisi scroll (scrub).** Kalau pengunjung berhenti di tengah, layar akan menunjukkan angka yang salah.
-| Potret: foto terbuka dari atas, kotak sorot muncul di wajah, baris selector muncul berurutan lalu "✓ Selector valid". Sekali, saat halaman dibuka | Cara robot UiPath mengenali elemen di layar, pekerjaan Norma sehari-hari. |
-| Hover baris process memunculkan cuplikan process log yang mengikuti kursor | Langkah robot yang sebenarnya, ganti gambar thumbnail. |
-| Langkah process log menyala berurutan saat discroll, garis progres terisi | Urutan eksekusi robot. |
-| Mata robot berkedip tiap ~5 detik | Satu-satunya gerak "karakter", dijaga sekecil mungkin. |
+Aturan:
 
-Aturan teknis:
-
-- Library: **GSAP + ScrollTrigger + SplitText** untuk animasi yang terikat scroll, **Motion** untuk interaksi (hover, layout, tab), **Lenis** untuk smooth scroll, **Radix UI** untuk komponen interaktif yang aksesibel (tabs, dialog). Radix adalah fondasi shadcn/ui; tampilannya mengikuti token di dokumen ini, bukan gaya bawaan shadcn.
-- Semua animasi dibungkus `prefers-reduced-motion: no-preference`. Dengan reduced motion: smooth scroll mati, semua konten tampil langsung di posisi akhir.
-- Durasi 0.4–0.9 detik, easing `power3.out` / `expo.out`. Tidak ada bounce atau elastic.
-- Konten tidak boleh tersembunyi kalau JavaScript gagal: state awal animasi diatur oleh JavaScript, bukan oleh CSS.
+- **Animasi yang menampilkan angka tidak boleh terikat posisi scroll.** Kalau pengunjung berhenti di tengah, layar menunjukkan angka yang salah.
+- Durasi 0.4–1.6 detik, easing `power3` / `expo`. Tidak ada bounce atau elastic (HIG).
+- Reduced motion: smooth scroll mati, semua animasi mati, konten tampil langsung di posisi akhir.
+- Konten tidak boleh tersembunyi kalau JavaScript gagal: state awal animasi diatur JavaScript, bukan CSS.
+- Library: GSAP (ScrollTrigger, SplitText), Motion, Lenis, Radix UI (fondasi shadcn/ui, dengan gaya dari dokumen ini).
 
 ---
 
 ## Sumber riset
 
-- AI design slop, 16 pola dan perbaikannya: https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it
+Apple:
+
+- HIG Typography: https://developer.apple.com/design/human-interface-guidelines/typography
+- HIG Color: https://developer.apple.com/design/human-interface-guidelines/color
+- HIG Layout: https://developer.apple.com/design/human-interface-guidelines/layout
+- HIG Accessibility (area klik, kontras): https://developer.apple.com/design/human-interface-guidelines/accessibility
+- HIG Motion: https://developer.apple.com/design/human-interface-guidelines/motion
+
+Anti AI slop dan referensi visual:
+
+- AI design slop, 16 pola: https://www.developersdigest.tech/blog/ai-design-slop-and-how-to-spot-it
 - Kenapa UI buatan AI terlihat generik: https://smoothui.dev/blog/ai-design-slop
 - Tanda website buatan AI: https://slopdar.com/guide/how-to-tell-if-a-website-is-ai-generated
-- Frasa dan tanda tulisan AI: https://www.ritnerdigital.com/blog/the-phrases-that-give-away-ai-writing-and-how-to-edit-them-out-before-they-cost-you-trust
+- Frasa tulisan AI: https://www.ritnerdigital.com/blog/the-phrases-that-give-away-ai-writing-and-how-to-edit-them-out-before-they-cost-you-trust
 - Em dash sebagai tanda tulisan AI: https://www.techradar.com/computing/artificial-intelligence/did-chatgpt-ruin-the-em-dash-heres-how-to-stop-it-putting-them-everywhere
 - Tipografi fintech dan angka tabular: https://medium.com/design-bootcamp/the-elements-of-fintech-typography-part-1-readable-money-b6c1226acbde
-- Panduan angka dalam tipografi: https://ilovetypography.com/2025/05/22/a-font-lovers-guide-to-numerals/
-- Contoh portofolio engineer: https://www.sitebuilderreport.com/inspiration/engineer-portfolios
-- Awwwards, portofolio terbaik: https://www.awwwards.com/websites/portfolio/
-- Awwwards, situs GSAP terbaik: https://www.awwwards.com/websites/gsap/
-- Awwwards, Portfolio '26 (fintech, GSAP): https://www.awwwards.com/sites/portfolio-26
+- Awwwards portofolio: https://www.awwwards.com/websites/portfolio/
+- Awwwards nominees: https://www.awwwards.com/websites/nominees/

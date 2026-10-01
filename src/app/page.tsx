@@ -11,21 +11,30 @@ export default function Home() {
   return (
     <main>
       <header className="hero page">
-        <p className="eyebrow mono">
-          {profile.role} · {profile.company} · {profile.location}
-        </p>
-        <SplitHeading as="h1" className="display-l hero-name" split="chars" immediate>
-          Norma Irkham
-          <br />
-          Maulana
-        </SplitHeading>
-
         <div className="hero-grid">
           <div className="hero-copy">
-            <p className="hero-tagline">{profile.tagline}</p>
-            {profile.summary.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
+            <h1 className="hero-name">{profile.name}</h1>
+            <p className="eyebrow mono">
+              {profile.role} · {profile.company} · {profile.location}
+            </p>
+
+            <SplitHeading className="display-m hero-headline" immediate>
+              I turn <s>hours</s> of banking operations into <em>minutes</em>.
+            </SplitHeading>
+
+            <p className="hero-desc">{profile.description}</p>
+
+            <ul className="hero-facts mono" aria-label="Track record">
+              {profile.proof.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+            <ul className="hero-facts hero-focus mono" aria-label="Focus">
+              {profile.focus.map((f) => (
+                <li key={f}>{f}</li>
+              ))}
+            </ul>
+
             <p className="hero-links mono">
               <a href={`mailto:${profile.email}`}>{profile.email}</a>
               <a href={profile.linkedin} target="_blank" rel="noreferrer">
