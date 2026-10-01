@@ -1,29 +1,23 @@
-"use client";
-
 import Link from "next/link";
 import { profile } from "@/data/site";
-import { jakartaTime, useNow } from "@/lib/time";
 
 export default function Nav() {
-  const now = useNow();
-
   return (
-    <header className="topbar">
-      <div className="page topbar-inner">
-        <Link href="/" className="topbar-name">
-          {profile.name}
+    <header className="nav">
+      <div className="wrap nav-inner">
+        <Link href="/" className="brand">
+          {profile.initials}
+          <span className="brand-blink">_</span>
         </Link>
-        <nav className="topbar-links" aria-label="Sections">
-          <Link href="/#processes">Processes</Link>
-          <Link href="/#experience">Experience</Link>
+        <nav className="nav-links" aria-label="Primary">
+          <Link href="/#work">Work</Link>
+          <Link href="/#stack">Stack</Link>
+          <Link href="/#journey">Journey</Link>
           <Link href="/#contact">Contact</Link>
-          <a href="/cv" target="_blank" rel="noreferrer">
-            CV ↗
-          </a>
         </nav>
-        <span className="topbar-clock mono" aria-label="Time in Jakarta">
-          JKT {now ? jakartaTime(now, true) : "--:--:--"}
-        </span>
+        <a className="btn btn-ghost btn-sm" href="/cv" target="_blank" rel="noreferrer">
+          CV ↗
+        </a>
       </div>
     </header>
   );

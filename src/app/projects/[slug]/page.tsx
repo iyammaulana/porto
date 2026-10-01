@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ProcessLog from "@/components/ProcessLog";
-import { DocSection } from "@/components/Section";
-import SplitHeading from "@/components/SplitHeading";
+import Flow from "@/components/Flow";
 import { projects } from "@/data/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -25,144 +23,124 @@ export default async function ProjectPage({ params }: Props) {
   const index = projects.findIndex((p) => p.slug === slug);
   if (index === -1) notFound();
 
-  const p = projects[index];
+  const project = projects[index];
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <main className="page">
-      <header className="doc-head">
-        <p className="eyebrow mono doc-meta">
-          <Link href="/#processes">← All processes</Link>
-          <span>{String(index + 1).padStart(2, "0")}</span>
-          <span>{p.kind}</span>
-          {p.since && <span>Since {p.since}</span>}
-          <span className={`status-${p.status.toLowerCase()}`}>{p.status}</span>
+    <main className="wrap case">
+      <Link className="link-arrow back" href="/#work">
+        <span aria-hidden="true">←</span> All work
+      </Link>
+
+      <header className="case-head">
+        <p className="feature-meta">
+          <span className="mono">{String(index + 1).padStart(2, "0")}</span>
+          <span className="tag">{project.category}</span>
         </p>
-        <SplitHeading as="h1" className="display-l doc-title" immediate>
-          {p.title}
-        </SplitHeading>
-        <p className="doc-summary">{p.summary}</p>
+        <h1>{project.title}</h1>
+        <p className="lede">{project.summary}</p>
       </header>
 
-      <ol className="results">
-        {p.results.map((r) => (
-          <li key={r.measure} className="result">
-            <p className="result-measure">{r.measure}</p>
-            <p className="result-values">
-              {r.before && <span className="result-before mono">{r.before}</span>}
-              <span className="result-after">{r.after}</span>
-            </p>
-          </li>
-        ))}
-      </ol>
-
-      <DocSection label="Specification" wide>
-        <table className="table spec">
-          <tbody>
-            <tr>
-              <th scope="row">Role</th>
-              <td>{p.role}</td>
-            </tr>
-            {p.spec.map((s) => (
-              <tr key={s.label}>
-                <th scope="row">{s.label}</th>
-                <td>{s.value}</td>
-              </tr>
-            ))}
-            {p.statusNote && (
-              <tr>
-                <th scope="row">Status</th>
-                <td>{p.statusNote}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </DocSection>
-
-      <DocSection label="Context">
-        <p>{p.context}</p>
-      </DocSection>
-
-      <DocSection label="What I built">
-        <ul className="list">
-          {p.built.map((b) => (
-            <li key={b}>{b}</li>
-          ))}
-        </ul>
-      </DocSection>
-
-      {p.robots && (
-        <DocSection label="Robots" wide>
-          <table className="table spec">
-            <tbody>
-              {p.robots.map((r) => (
-                <tr key={r.name}>
-                  <th scope="row">{r.name}</th>
-                  <td>{r.body}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </DocSection>
-      )}
-
-      <DocSection label="Process log" wide>
-        <ProcessLog logs={p.logs} />
-        {p.logNote && <p className="muted log-note">{p.logNote}</p>}
-      </DocSection>
-
-      {p.exceptions && (
-        <DocSection label="Exception handling" wide>
-          <div className="scroll">
-            <table className="table exceptions">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>When</th>
-                  <th>What happens</th>
-                </tr>
-              </thead>
-              <tbody>
-                {p.exceptions.map((e) => (
-                  <tr key={e.when}>
-                    <td className="mono">{e.type}</td>
-                    <td>{e.when}</td>
-                    <td>{e.then}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <dl className="case-facts">
+        {project.facts.map((f) => (
+          <div key={f.label}>
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
           </div>
-        </DocSection>
-      )}
+        ))}
+      </dl>
 
-      {p.decisions && (
-        <DocSection label="Decisions">
-          {p.decisions.map((d, i) => (
-            <div key={d.title} className="decision">
-              <span className="decision-idx mono">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h3>{d.title}</h3>
-                <p>{d.body}</p>
-              </div>
+      <dl className="case-metrics">
+        {project.metrics.map((m) => (
+          <div key={m.label} className="metric">
+            <dt className="metric-value">{m.value}</dt>
+            <dd className="metric-label">{m.label}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className="case-body">
+        <section>
+          <p className="kicker">Context</p>
+          <p className="case-context">{project.context}</p>
+        </section>
+
+        {project.robots && (
+          <section className="case-wide">
+            <p className="kicker">What the robots do</p>
+            <div className="robots">
+              {project.robots.map((r) => (
+                <article key={r.name} className="robot">
+                  <h2>{r.name}</h2>
+                  <p>{r.body}</p>
+                </article>
+              ))}
             </div>
-          ))}
-        </DocSection>
-      )}
+          </section>
+        )}
 
-      {p.note && (
-        <DocSection label="Scope">
-          <p>{p.note}</p>
-        </DocSection>
-      )}
+        {project.flows ? (
+          <section className="case-wide">
+            <p className="kicker">How a case moves</p>
+            <div className="flows">
+              {project.flows.map((f) => (
+                <div key={f.title} className="feature-panel">
+                  <p className="panel-label mono">{f.title}</p>
+                  <Flow steps={f.steps} />
+                </div>
+              ))}
+            </div>
+            <p className="flow-legend mono">
+              <span className="legend-dot auto" /> automated
+              <span className="legend-dot human" /> human approval
+            </p>
+            {project.flowNote && <p className="flow-note">{project.flowNote}</p>}
+          </section>
+        ) : (
+          <section className="feature-panel">
+            <p className="panel-label mono">flow</p>
+            <Flow steps={project.flow} />
+          </section>
+        )}
 
-      <DocSection label="Stack">
-        <p className="stack mono">{p.stack.join(" · ")}</p>
-      </DocSection>
+        <section>
+          <p className="kicker">What I built</p>
+          <ul className="case-list">
+            {project.built.map((b) => (
+              <li key={b}>{b}</li>
+            ))}
+          </ul>
+        </section>
 
-      <Link className="next" href={`/projects/${next.slug}`}>
-        <span className="eyebrow mono">Next process</span>
-        <span className="display-m next-title">{next.title} →</span>
+        <section>
+          <p className="kicker">Challenges &amp; decisions</p>
+          <div className="decisions">
+            {project.decisions.map((d) => (
+              <article key={d.title} className="decision">
+                <h2>{d.title}</h2>
+                <p>{d.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {project.note && <p className="case-note">{project.note}</p>}
+
+        <section>
+          <p className="kicker">Stack</p>
+          <ul className="pill-list">
+            {project.stack.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <Link className="case-next" href={`/projects/${next.slug}`}>
+        <span className="kicker">Next</span>
+        <span className="case-next-title">
+          {next.title} <span aria-hidden="true">→</span>
+        </span>
       </Link>
     </main>
   );
