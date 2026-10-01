@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.env*
+*.tsbuildinfo
+.DS_Store
+
+# Private source material. Never push.
+# Project documents: internal reference only, not for publication.
+referensi project/
+# Original photo shows other people. Replace with a pre-cropped photo before deploying.
+foto/
