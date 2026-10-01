@@ -119,7 +119,7 @@ Tidak ada jarak di luar daftar ini.
 
 | Token | Nilai | Asal |
 |---|---|---|
-| `--w-page` | 980px | Lebar konten apple.com |
+| `--w-page` | 1200px | Lebih lebar dari apple.com (980px) atas permintaan Norma, supaya halaman mengisi layar laptop |
 | `--w-text` | 692px | Lebar baca paragraf (~70 karakter di 17px) |
 | `--gutter` | 40 / 24 / 16px | Desktop / tablet / HP |
 

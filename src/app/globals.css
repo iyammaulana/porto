@@ -45,7 +45,7 @@
   --s-12: 120px;
 
   /* Widths and sizes. */
-  --w-page: 980px; /* apple.com content width */
+  --w-page: 1200px; /* wider than apple.com (980) so the page fills a laptop screen */
   --w-text: 692px; /* readable measure at body size */
   --gutter: var(--s-7);
   --bar: 52px;
@@ -256,7 +256,7 @@ a:hover {
 
 /* Layout after the reference header: small name block top left, a headline
    across the page, then description on the left and a small portrait on the
-   right whose foot lines up with the links. A hairline closes the hero. */
+   right; the two blocks are centred against each other. A hairline closes the hero. */
 .hero {
   padding-block: var(--s-8) var(--s-9);
   border-bottom: var(--hairline) solid var(--separator);
@@ -264,14 +264,14 @@ a:hover {
 
 .hero-name {
   font-family: var(--display);
-  font-size: var(--t-title3);
-  line-height: 25px;
+  font-size: var(--t-large);
+  line-height: 41px;
   font-weight: 600;
 }
 
 .hero-role {
-  font-size: var(--t-footnote);
-  line-height: 18px;
+  font-size: var(--t-subhead);
+  line-height: 20px;
   color: var(--label-2);
 }
 
@@ -289,7 +289,7 @@ a:hover {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
   gap: var(--s-9);
-  align-items: end;
+  align-items: center;
   margin-top: var(--s-6);
 }
 
