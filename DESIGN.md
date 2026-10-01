@@ -164,7 +164,7 @@ Hanya ini. Komponen baru harus ditambahkan ke daftar ini dulu.
 7. **Sertifikat**: thumbnail berbingkai 1px, dibuka penuh dalam dialog (Radix Dialog).
 8. **Kompresi waktu**: bar per process, 60 menit = lebar penuh. Garis putus-putus = manual, bar penuh = otomatis.
 9. **Kompresi orang**: satu kotak per orang. Garis putus-putus = tidak dibutuhkan lagi, penuh = tetap di process.
-10. **Potret "indicate element"**: foto Norma berwarna, bingkai 1px, kotak sorot biru di wajah, caption berupa selector UiPath. Yang dipakai adalah `public/norma.jpeg`, foto yang sudah dipotong Norma sendiri (3:4), sehingga orang lain di foto asli tidak ikut. Foto asli tidak pernah di-commit.
+10. **Potret "indicate element"**: foto Norma berwarna, bingkai 1px, kotak sorot biru di wajah, caption berupa selector UiPath. Foto dipotong di server sehingga orang lain di foto asli tidak pernah terkirim ke browser.
 11. **Cuplikan log**: panel yang mengikuti kursor saat hover baris process (hanya perangkat dengan mouse).
 12. **Tabs**: memilih process log bila satu project punya lebih dari satu alur (Radix Tabs).
 13. **Robot**: satu ikon kepala robot bergaris. Hanya di caption potret (16px), penanda aktor `ROBOT` (14px), dan favicon.

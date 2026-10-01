@@ -11,31 +11,27 @@ export default function Home() {
   return (
     <main>
       <header className="hero page">
+        <h1 className="hero-name">{profile.name}</h1>
+        <p className="hero-role">
+          {profile.role} at {profile.company} · {profile.location}
+        </p>
+
+        {/* Two fixed lines on tablet and up. */}
+        <SplitHeading className="hero-headline" immediate>
+          <span className="hero-line">
+            I turn <s>hours</s> of banking
+          </span>{" "}
+          <span className="hero-line">
+            operations into <em>minutes</em>.
+          </span>
+        </SplitHeading>
+
         <div className="hero-grid">
           <div className="hero-copy">
-            <h1 className="hero-name">{profile.name}</h1>
-            <p className="eyebrow mono">
-              {profile.role} · {profile.company} · {profile.location}
-            </p>
-
-            <SplitHeading className="display-m hero-headline" immediate>
-              I turn <s>hours</s> of banking operations into <em>minutes</em>.
-            </SplitHeading>
-
             <p className="hero-desc">{profile.description}</p>
 
-            <ul className="hero-facts mono" aria-label="Track record">
-              {profile.proof.map((p) => (
-                <li key={p}>{p}</li>
-              ))}
-            </ul>
-            <ul className="hero-facts hero-focus mono" aria-label="Focus">
-              {profile.focus.map((f) => (
-                <li key={f}>{f}</li>
-              ))}
-            </ul>
-
-            <p className="hero-links mono">
+            <p className="hero-contact">
+              <a href="#processes">See the processes</a>
               <a href={`mailto:${profile.email}`}>{profile.email}</a>
               <a href={profile.linkedin} target="_blank" rel="noreferrer">
                 LinkedIn ↗

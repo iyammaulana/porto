@@ -9,7 +9,7 @@ export const profile = {
   company: "PT Bank Mega",
   // Hero. The headline is set in page.tsx because "hours" is struck through.
   description:
-    "Senior Automation & Software Engineer at PT Bank Mega since 2020, UiPath Certified. I take a manual process from the first conversation with the business team to a robot running unattended in production: the Laravel app where people approve its output, the core banking integration behind it, and the exception handling that keeps it accurate. I also built the bank's AI gateway, which ~70 developers use with Claude Code.",
+    "Senior Automation & Software Engineer at PT Bank Mega since 2020, UiPath Certified. I take a manual process from the first conversation with the business team to a robot running unattended in production, together with the Laravel system around it (dashboards, data lists, monitoring, and maker–checker approval), the core banking integration behind it, and the exception handling that keeps it accurate. I also built the bank's AI gateway, which ~70 developers use with Claude Code.",
   proof: [
     "100+ robots in production",
     "1–2 h → 3–10 min per process",

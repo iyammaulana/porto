@@ -254,29 +254,50 @@ a:hover {
 
 /* Hero */
 
+/* Layout after the reference header: small name block top left, a headline
+   across the page, then description on the left and a small portrait on the
+   right whose foot lines up with the links. A hairline closes the hero. */
 .hero {
-  padding-block: var(--s-9) var(--s-11);
+  padding-block: var(--s-8) var(--s-9);
+  border-bottom: var(--hairline) solid var(--separator);
+}
+
+.hero-name {
+  font-family: var(--display);
+  font-size: var(--t-title3);
+  line-height: 25px;
+  font-weight: 600;
+}
+
+.hero-role {
+  font-size: var(--t-footnote);
+  line-height: 18px;
+  color: var(--label-2);
+}
+
+.hero-headline {
+  margin-top: var(--s-8);
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  /* Two lines across the page width; capped at 80px. */
+  font-size: clamp(34px, 7vw, 80px);
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
   gap: var(--s-9);
-  align-items: start;
+  align-items: end;
+  margin-top: var(--s-6);
 }
 
-.hero-name {
-  font-size: var(--t-title1);
-  line-height: 34px;
-  font-weight: 600;
-}
-
-.hero-name + .eyebrow {
-  margin-top: var(--s-1);
-}
-
-.hero-headline {
-  margin-top: var(--s-7);
+@media (min-width: 735px) {
+  .hero-line {
+    display: block;
+    white-space: nowrap;
+  }
 }
 
 .hero-headline s {
@@ -292,32 +313,30 @@ a:hover {
 }
 
 .hero-desc {
-  max-width: var(--w-text);
-  margin-top: var(--s-5);
+  max-width: 600px;
+  font-size: var(--t-title3);
+  line-height: 1.6;
+  color: var(--label-2);
 }
 
-.hero-facts {
+.hero-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-1) 0;
-  margin-top: var(--s-5);
-  padding: var(--s-3) 0;
-  list-style: none;
-  border-top: var(--hairline) solid var(--separator);
-  font-size: var(--t-footnote);
-  line-height: 18px;
+  gap: var(--s-2) var(--s-6);
+  margin-top: var(--s-6);
+  font-size: var(--t-subhead);
 }
 
-.hero-facts li:not(:last-child)::after {
-  content: "·";
-  margin-inline: var(--s-2);
-  color: var(--label-3);
+.hero-contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--label);
+  text-decoration-color: var(--separator);
 }
 
-.hero-focus {
-  margin-top: 0;
-  border-bottom: var(--hairline) solid var(--separator);
-  color: var(--label-2);
+.hero-contact a:hover {
+  text-decoration-color: currentColor;
 }
 
 .hero-links {
@@ -338,7 +357,7 @@ a:hover {
 
 .portrait {
   width: 100%;
-  max-width: 380px;
+  max-width: 280px;
   justify-self: end;
 }
 
@@ -1131,17 +1150,17 @@ a:hover {
 /* Medium: apple.com breakpoint */
 
 @media (max-width: 1068px) {
-  .hero-grid,
   .compress-head {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .topbar-links {
-    display: none;
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+    gap: var(--s-7);
   }
 
-  .portrait {
-    justify-self: start;
+  .topbar-links {
+    display: none;
   }
 
   .topbar-clock {
@@ -1152,6 +1171,20 @@ a:hover {
 /* Small: apple.com breakpoint */
 
 @media (max-width: 734px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-7);
+  }
+
+  .portrait {
+    justify-self: start;
+    max-width: 240px;
+  }
+
+  .hero-desc {
+    font-size: var(--t-body);
+  }
+
   .compress {
     padding-block: var(--s-9);
   }

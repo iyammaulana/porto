@@ -38,7 +38,7 @@ export default function Portrait() {
           className="portrait-img"
           src={photo}
           alt="Norma Irkham Maulana"
-          sizes="(max-width: 1068px) 100vw, 340px"
+          sizes="(max-width: 1068px) 260px, 260px"
           priority
         />
         <span className="indicate" aria-hidden="true">
