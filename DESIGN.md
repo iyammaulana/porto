@@ -63,7 +63,7 @@ Aturan:
 
 ## 3. Warna
 
-Peran semantik ala Apple (label, secondary label, separator, background, link). Mengikuti setting perangkat lewat `prefers-color-scheme`. Warna sistem memakai varian **increased contrast** dari HIG supaya lolos kontras untuk teks.
+Peran semantik ala Apple (label, secondary label, separator, background, link). Default mengikuti setting perangkat (`prefers-color-scheme`). Pengunjung bisa memilih terang atau gelap lewat tombol tema di top bar; pilihannya disimpan di browser (`localStorage`) dan dipasang sebagai `data-theme` sebelum halaman tampil, jadi tidak ada kedipan tema salah. Warna sistem memakai varian **increased contrast** dari HIG supaya lolos kontras untuk teks.
 
 | Token | Peran Apple | Terang | Gelap | Pakai untuk |
 |---|---|---|---|---|
@@ -168,6 +168,7 @@ Hanya ini. Komponen baru harus ditambahkan ke daftar ini dulu.
 11. **Cuplikan log**: panel yang mengikuti kursor saat hover baris process (hanya perangkat dengan mouse).
 12. **Tabs**: memilih process log bila satu project punya lebih dari satu alur (Radix Tabs).
 13. **Robot**: satu ikon kepala robot bergaris. Hanya di caption potret (16px), penanda aktor `ROBOT` (14px), dan favicon.
+14. **Tombol tema**: item terakhir di navigasi top bar, setelah CV, bergaya seperti link: "Theme: Auto". Tiap klik berganti Auto → Light → Dark → Auto. Auto ikut perangkat; Light dan Dark disimpan di browser. Tetap terlihat di HP saat link section disembunyikan. Jam JKT dihapus dari top bar.
 
 Ditolak:
 
@@ -230,14 +231,16 @@ Uji sebelum menerbitkan teks:
 
 ### Beranda (`/`)
 
-1. Hero: nama (Title 1, 28px) dan jabatan di atas; headline "I turn ~~hours~~ of banking operations into minutes." sebagai teks terbesar (pengecualian yang disetujui Norma untuk larangan formula "I turn X into Y", karena didukung angka 1–2 h → 3–10 min) ("hours" abu-abu dan dicoret, "minutes" bergaris bawah, tanpa warna aksen); deskripsi; baris bukti; baris fokus; link kontak; potret di kanan. Nama sengaja tidak dibuat raksasa: yang paling besar adalah pesan dan buktinya.
-2. Kompresi waktu.
-3. Kompresi orang.
-4. Processes I built.
-5. Experience (termasuk pendidikan).
-6. Skills.
-7. Certifications.
-8. Contact.
+1. Hero: nama dan jabatan, headline, deskripsi, link kontak, potret.
+2. Fakta: tiga kotak sejajar gaya v0, satu per bidang kerja: nilai besar (display-s) dan label kecil, dipisah garis tipis (`100+` robots in production, `250K+` transactions reconciled per day, `~100` users on the AI gateway). Pengecualian yang disetujui Norma untuk larangan "stat banner". Tidak ada kalimat "open to work" di mana pun; ajakan cukup satu kalimat lunak di Contact ("Happy to talk about automation.").
+3. Kompresi waktu.
+4. Kompresi orang.
+5. Processes I built.
+6. UiPath in depth: tabel tiga kolom (jenis otomasi, penjelasan, process yang membuktikannya). Setiap baris wajib menaut ke project nyata.
+7. Experience: paragraf peran, penjelasan hitungan 100+ robot, lalu tabel per tahun (2020 sampai sekarang) dari tanggal rilis di dokumen project. Termasuk hackathon dan pendidikan.
+8. Skills: hanya yang dikonfirmasi Norma dipakai.
+9. Certifications.
+10. Contact.
 
 ### Halaman project (`/projects/[slug]`)
 

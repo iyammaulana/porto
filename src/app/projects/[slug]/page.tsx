@@ -55,6 +55,7 @@ export default async function ProjectPage({ params }: Props) {
           </li>
         ))}
       </ol>
+      {p.resultsNote && <p className="results-note">{p.resultsNote}</p>}
 
       <DocSection label="Specification" wide>
         <table className="table spec">

@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font
 import Nav from "@/components/Nav";
 import SmoothScroll from "@/components/SmoothScroll";
 import { profile } from "@/data/site";
+import { themeScript } from "@/lib/theme";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
@@ -25,7 +26,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${condensed.variable} ${mono.variable}`}>
+    // suppressHydrationWarning: the theme script may set data-theme before React hydrates.
+    <html lang="en" className={`${sans.variable} ${condensed.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <SmoothScroll />
         <Nav />

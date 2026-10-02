@@ -9,7 +9,7 @@ export const profile = {
   company: "PT Bank Mega",
   // Hero. The headline is set in page.tsx because "hours" is struck through.
   description:
-    "Senior Automation & Software Engineer at PT Bank Mega since 2020, UiPath Certified. I take a manual process from the first conversation with the business team to a robot running unattended in production, together with the Laravel system around it (dashboards, data lists, monitoring, and maker–checker approval), the core banking integration behind it, and the exception handling that keeps it accurate. I also built the bank's AI gateway, which ~70 developers use with Claude Code.",
+    "Senior Automation & Software Engineer at PT Bank Mega since 2020, UiPath Certified. I take a manual process from the first conversation with the business team to a robot running unattended in production, together with the Laravel system around it (dashboards, data lists, monitoring, and maker–checker approval), the core banking integration behind it, and the exception handling that keeps it accurate. I also built the bank's AI gateway, which ~100 developers, analysts, and testers use with Claude Code.",
   proof: [
     "100+ robots in production",
     "1–2 h → 3–10 min per process",
@@ -22,6 +22,14 @@ export const profile = {
     "Core banking: AS400, Open API",
     "AI: Bifrost, Claude Code",
   ],
+  // Fact tiles under the hero, one per area of work: large value, small label.
+  facts: [
+    { value: "100+", label: "robots in production" },
+    { value: "250K+", label: "transactions reconciled per day" },
+    { value: "~100", label: "users on the AI gateway" },
+  ],
+  // Soft invitation in the Contact section. No "open to work" wording anywhere on the site.
+  contactNote: "Happy to talk about automation.",
   location: "Jakarta, Indonesia",
   email: "normairkhamm@gmail.com",
   linkedin: "https://linkedin.com/in/norma-irkham-maulana",
@@ -46,6 +54,8 @@ export type Project = {
   // One row in the process registry on the home page.
   registry: { trigger: string; runs: string; result: string };  spec: { label: string; value: string }[];
   results: { measure: string; before?: string; after: string }[];
+  // How the numbers above were measured, shown under the results.
+  resultsNote?: string;
   context: string;
   built: string[];
   robots?: { name: string; body: string }[];
@@ -63,12 +73,12 @@ export const projects: Project[] = [
     title: "Dispute Resolution System",
     kind: "RPA + Web app",
     summary:
-      "A maker robot and a checker robot work the bank's dispute tickets on BI-Fast and ATM portals around the clock. People approve every posting in a Laravel web app. The system replaced a 10–15 person manual operation.",
+      "A maker robot and a checker robot work the bank's dispute tickets on BI-Fast and ATM portals around the clock. People approve every posting in a Laravel web app. The system replaced a 10-person manual operation.",
     role: "Individual contributor: process analysis, design, development, maintenance",
     since: "2023",
     status: "RUNNING",
     statusNote: "Lanes released 2023–2025. QR disputes in development.",
-    registry: { trigger: "Portal poll + API", runs: "24/7", result: "1 h → 5–10 min" },    spec: [
+    registry: { trigger: "Portal poll + API", runs: "24/7", result: "1 h → 10 min" },    spec: [
       { label: "Trigger", value: "Polling third-party portals (incoming), call center API (outgoing)" },
       { label: "Runs", value: "24/7" },
       { label: "Input", value: "Dispute tickets on CIPortal, Artajasa, and Prima. Cases from the call center." },
@@ -77,11 +87,13 @@ export const projects: Project[] = [
       { label: "Build time", value: "About 1 month per dispute lane, 7 weeks for credit card" },
     ],
     results: [
-      { measure: "Staff on the dispute desk", before: "10–15", after: "4 (2 makers, 2 approvers)" },
-      { measure: "Processing time per transaction", before: "1 h", after: "5–10 min" },
+      { measure: "People on the dispute desk", before: "10", after: "4" },
+      { measure: "Average time per transaction", before: "1 h", after: "10 min" },
     ],
+    resultsNote:
+      "Average hands-on time for one transaction across BI-Fast, ATM, and credit card disputes. Time spent waiting for the other bank or for Visa is not counted. Four people remain because every posting still passes a maker and a checker.",
     context:
-      "A dispute starts at the call center, moves to another bank or a card network, waits days for an answer, and ends when money moves in or out of an account. Before this system, 10–15 makers and approvers did every step by hand: checking third-party portals, matching reconciliation data, preparing postings.",
+      "A dispute starts at the call center, moves to another bank or a card network, waits days for an answer, and ends when money moves in or out of an account. Before this system, 10 makers and approvers did every step by hand: checking third-party portals, matching reconciliation data, preparing postings.",
     built: [
       "One system across four lanes: BI-Fast, ATM on two switching networks, credit card, and closed card and service-charge waivers.",
       "The robots that operate the third-party portals, and the web app where human makers and checkers approve postings.",
@@ -225,15 +237,15 @@ export const projects: Project[] = [
     role: "Gateway developer in a cross-team AI platform initiative",
     status: "PILOT",
     statusNote: "In daily use, rolling out to 200+ users.",
-    registry: { trigger: "API request", runs: "On request", result: "~70 developers" },    spec: [
+    registry: { trigger: "API request", runs: "On request", result: "98 users" },    spec: [
       { label: "Trigger", value: "Every request from Claude Code" },
-      { label: "Users", value: "~70 developers, analysts, and testers. Target 200+." },
+      { label: "Users", value: "98 developers, analysts, and testers. Target 200+." },
       { label: "Input", value: "Prompts from Claude Code, authenticated per developer" },
       { label: "Output", value: "Responses from Claude or GLM, usage and token logs per developer" },
       { label: "Models", value: "Claude and GLM. Gemini planned." },
     ],
     results: [
-      { measure: "Registered users", after: "~70" },
+      { measure: "Registered users", after: "98" },
       { measure: "Models behind one endpoint", after: "2, Gemini next" },
     ],
     context:
@@ -281,7 +293,7 @@ export const projects: Project[] = [
       },
     ],
     note: "Guardrail logic comes from the IT security team and the servers from the infrastructure team. I built the gateway.",
-    stack: ["Bifrost", "Go", "Claude Code", "Claude", "GLM (Z.AI)", "Docker", "ClickHouse", "Langfuse"],
+    stack: ["Bifrost", "Go", "Claude Code", "Claude", "GLM (Z.AI)", "Docker", "PostgreSQL", "ClickHouse", "Langfuse"],
   },
   {
     slug: "core-banking-realtime-integration",
@@ -302,8 +314,11 @@ export const projects: Project[] = [
     ],
     results: [
       { measure: "Customer data update", before: "30 min", after: "10 min" },
+      { measure: "People updating customer data", before: "1", after: "0" },
       { measure: "Update requests per day", after: "25–50+" },
     ],
+    resultsNote:
+      "Nobody updates customer data by hand anymore. The team only monitors the robot.",
     context:
       "Another team's application needed three sensitive core banking operations. The core banking system runs on AS400 terminals with no native API, so staff did them by hand, even though a card block has to happen fast and a new merchant is waiting to use QRIS.",
     built: [
@@ -363,21 +378,21 @@ export const projects: Project[] = [
     since: "2022",
     status: "RUNNING",
     statusNote: "Live since the day BI-Fast launched in Indonesia.",
-    registry: { trigger: "Schedule", runs: "Every 15 min", result: "1–2M tx / day" },    spec: [
+    registry: { trigger: "Schedule", runs: "Every 15 min", result: "250K+ tx / day" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule, every 15 minutes" },
       { label: "Runs", value: "24/7" },
       { label: "Input", value: "Host data over SFTP, BI-Fast data from CIPortal" },
       { label: "Output", value: "Match and unmatch results, real-time postings and refunds, Laravel dashboard" },
-      { label: "Volume", value: "3,000–4,000+ BI-Fast transactions per pull" },
+      { label: "Volume", value: "About 200,000 BI-Fast transactions a day, up to 4,000 per pull at peak hours. QRIS and Biller add about 50,000." },
       { label: "Build time", value: "1–2 months for the BI-Fast module" },
     ],
     results: [
       { measure: "Manual reconciliation automated", after: "85%" },
-      { measure: "Transactions per day", after: "1–2M" },
+      { measure: "Transactions per day", after: "250K+" },
       { measure: "From pull to result on the dashboard", after: "~30 min" },
     ],
     context:
-      "Every transaction has two records: one in the bank's host system and one in the external network, which for BI-Fast is Bank Indonesia's. A gap on either side means money to adjust or refund. At one to two million transactions a day, matching by hand is not an option.",
+      "Every transaction has two records: one in the bank's host system and one in the external network, which for BI-Fast is Bank Indonesia's. A gap on either side means money to adjust or refund. At more than 250,000 transactions a day across BI-Fast, QRIS, and Biller, matching by hand is not an option.",
     built: [
       "The reconciliation engine for BI-Fast, QR, and Biller.",
       "A robot that pulls BI-Fast transactions from CIPortal into a staging database every 15 minutes.",
@@ -412,10 +427,10 @@ export const projects: Project[] = [
     decisions: [
       {
         title: "A 15-minute cycle that never overlaps",
-        body: "Each pull carries 3,000 to more than 4,000 transactions. The robot is built to finish a batch before the next window opens, so two cycles never run at once.",
+        body: "At peak hours a single pull carries 3,000 to more than 4,000 transactions. The robot is built to finish a batch before the next window opens, so two cycles never run at once.",
       },
     ],
-    stack: ["UiPath (Unattended)", "REFramework", "SFTP", "Staging databases", "Laravel", "MySQL", "SQL Server"],
+    stack: ["UiPath (Unattended)", "REFramework", "SFTP", "Staging databases", "Laravel", "MySQL", "SQL Server", "GitLab CI"],
   },
   {
     slug: "visa-mastercard-settlement",
@@ -426,19 +441,20 @@ export const projects: Project[] = [
     role: "Individual contributor: design, RPA and web app development, maintenance",
     since: "2023",
     status: "RUNNING",
-    registry: { trigger: "Schedule", runs: "Daily", result: "60 → 10 min" },    spec: [
+    registry: { trigger: "Schedule", runs: "Daily", result: "1.5 h → 15–20 min" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule" },
       { label: "Runs", value: "Daily" },
       { label: "Input", value: "Unstructured TXT settlement files from card processing" },
       { label: "Output", value: "Reconciled settlement result and journals, posted to host after approval" },
-      { label: "Approvals", value: "4 makers and 2 approvers, every day" },
+      { label: "Approvals", value: "Maker and approver sign-off, every day" },
       { label: "Build time", value: "About 1.5 months" },
     ],
     results: [
-      { measure: "Visa settlement", before: "60 min", after: "10 min" },
-      { measure: "Mastercard settlement", before: "45 min", after: "7 min" },
-      { measure: "Staff processing settlement", before: "2–4", after: "1" },
+      { measure: "Daily settlement, Visa and Mastercard", before: "1.5 h", after: "15–20 min" },
+      { measure: "People on settlement", before: "4", after: "2" },
     ],
+    resultsNote:
+      "Time is measured for one person running both settlements end to end, once a day. Two people remain because every posting still passes a maker and a checker.",
     context:
       "Settlement with Visa and Mastercard sets the bank's financial position against two card networks, at billions of rupiah a day. The files arrive as unstructured TXT. Two to four people processed them by hand in Excel every day.",
     built: [
@@ -514,7 +530,7 @@ export const projects: Project[] = [
     role: "Individual contributor: process analysis, solution design, development",
     since: "2021",
     status: "RUNNING",
-    registry: { trigger: "Schedule", runs: "Daily", result: "30 → 3–5 min" },    spec: [
+    registry: { trigger: "Schedule", runs: "Daily", result: "30 → 5 min" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule" },
       { label: "Runs", value: "Daily" },
       { label: "Input", value: "Transactions from web and desktop applications" },
@@ -523,13 +539,15 @@ export const projects: Project[] = [
       { label: "Build time", value: "5–10 working days per process, 15 for AFS bonds" },
     ],
     results: [
-      { measure: "Staff", before: "3", after: "1 supervisor" },
-      { measure: "Time per journal", before: "30 min", after: "3–5 min" },
+      { measure: "People running the journals", before: "2", after: "0" },
+      { measure: "Per process", before: "30 min", after: "5 min" },
       { measure: "AFS bond journal", before: "60 min", after: "5–10 min" },
       { measure: "Human errors", after: "0" },
     ],
+    resultsNote:
+      "Posting is automatic, so nobody runs these journals by hand anymore. The team only monitors them in the app.",
     context:
-      "Treasury Operations ran its daily journals by hand in Excel. Volumes were tens to hundreds of transactions a day, but every process stacked filters, lookups, and business-rule calculations. Three people spent 30 minutes to an hour per process, every day.",
+      "Treasury Operations ran its daily journals by hand in Excel. Volumes were tens to hundreds of transactions a day, but every process stacked filters, lookups, and business-rule calculations. Two people spent 30 minutes to an hour per process, every day.",
     built: [
       "Worked through the manual processes with the Treasury Operations team and picked the ones worth automating.",
       "Five robots that share one pipeline from extraction to posting.",
@@ -585,7 +603,7 @@ export const projects: Project[] = [
     role: "Individual contributor: design and development",
     since: "2022",
     status: "RUNNING",
-    registry: { trigger: "Schedule", runs: "Daily", result: ">1 h → ~15 min" },    spec: [
+    registry: { trigger: "Schedule", runs: "Daily", result: "1 h → 5 min" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule" },
       { label: "Runs", value: "Daily" },
       { label: "Input", value: "Third-party TXT reports from FTP, a different format per transaction type" },
@@ -593,11 +611,13 @@ export const projects: Project[] = [
       { label: "Scope", value: "10 transaction types: QR, NPG acquiring, interface rejections, credit card payments across channels" },
     ],
     results: [
-      { measure: "Time to confirmed posting", before: ">1 h", after: "~15 min" },
-      { measure: "Staff", before: "2", after: "1 supervisor" },
+      { measure: "Daily run, 10 transaction types", before: "1 h", after: "5 min" },
+      { measure: "People running it", before: "1", after: "0" },
     ],
+    resultsNote:
+      "Total time per day for all ten transaction types, up to the point the journals are sent to the host for posting. Posting is automatic with no maker or checker, so nobody runs it by hand anymore. The team only monitors it in the app.",
     context:
-      "The transaction operations division books GL differences for ten card and payment transaction types. The source is raw TXT reports from third parties, each type in its own format. Two people downloaded, read, mapped, and posted them by hand, for more than an hour a day.",
+      "The transaction operations division books GL differences for ten card and payment transaction types. The source is raw TXT reports from third parties, each type in its own format. One person downloaded, read, mapped, and posted them by hand, about an hour a day.",
     built: [
       "One pipeline for all ten transaction types, from TXT report to posting result.",
       "Regex and pattern-based parsing that turns each raw report into a structured datatable.",
@@ -649,7 +669,7 @@ export const projects: Project[] = [
     role: "Individual contributor: design, development, maintenance",
     since: "2023",
     status: "RUNNING",
-    registry: { trigger: "Schedule", runs: "Daily", result: "60 → 0–5 min" },    spec: [
+    registry: { trigger: "Schedule", runs: "Daily", result: "30 → 5 min" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule" },
       { label: "Runs", value: "Daily, including weekends and public holidays" },
       { label: "Input", value: "Settlement reports, mostly unstructured TXT" },
@@ -658,11 +678,13 @@ export const projects: Project[] = [
       { label: "Build time", value: "15 working days" },
     ],
     results: [
-      { measure: "Time to send data to host", before: "60 min", after: "0–5 min" },
-      { measure: "Staff", before: "2", after: "1" },
+      { measure: "Daily run, 6 transaction types", before: "30 min", after: "5 min" },
+      { measure: "People running it", before: "1", after: "0" },
     ],
+    resultsNote:
+      "Total time per day for all six transaction types, up to posting. Posting is automatic with no maker or checker, so nobody runs it by hand anymore. The team only monitors it in the app.",
     context:
-      "This process moves funds between a GL and an account. The amounts come from each channel's settlement report, mostly TXT with little structure. Two people read the reports, worked out the amounts, and created the transfers and journals by hand, about an hour per process.",
+      "This process moves funds between a GL and an account. The amounts come from each channel's settlement report, mostly TXT with little structure. One person read the reports, worked out the amounts, and created the transfers and journals by hand, about 30 minutes a day.",
     built: [
       "Robots for each channel, running every day of the year.",
       "A Laravel dashboard for posting status, alongside Orchestrator monitoring.",
@@ -710,7 +732,7 @@ export const projects: Project[] = [
     since: "2021",
     status: "RUNNING",
     statusNote: "Went live between 2021 and 2024. All eight still run.",
-    registry: { trigger: "Schedule", runs: "3×/day – monthly", result: "15 → 2–3 min" },    spec: [
+    registry: { trigger: "Schedule", runs: "3×/day – monthly", result: "10 → 3 min" },    spec: [
       { label: "Trigger", value: "Orchestrator schedule" },
       { label: "Runs", value: "From three times a day to monthly" },
       { label: "Input", value: "Web and desktop apps, data warehouse, SFTP, third-party portals" },
@@ -719,9 +741,12 @@ export const projects: Project[] = [
       { label: "Build time", value: "3–5 working days per process" },
     ],
     results: [
-      { measure: "OJK report preparation", before: "10–15 min", after: "2–3 min" },
+      { measure: "Per report", before: "10 min", after: "3 min" },
+      { measure: "People preparing reports", before: "1", after: "0" },
       { measure: "Payment system status checks", after: "3× a day" },
     ],
+    resultsNote:
+      "Reports go straight to their recipients, so nobody prepares them by hand anymore.",
     context:
       "Treasury prepares regulatory reports for OJK and runs a set of operational monitoring tasks next to them. All of it was manual: staff downloaded reports from source systems and saved them to shared folders for other teams.",
     built: [
@@ -776,13 +801,83 @@ export const experience = [
     when: "Nov 2020 – present",
     title: "Senior Automation & Software Engineer",
     org: "PT Bank Mega",
-    body: "Design, build, and maintain automation across banking operations: UiPath robots, Laravel web apps, core banking integrations, and the bank's AI gateway. Handle production incidents, root cause analysis, and performance work.",
+    body: "Joined as a fresh graduate in November 2020 and grew into the senior role. I work with business teams to find manual processes worth automating, then design, build, and run the solution: UiPath robots, the Laravel systems around them, core banking integrations, and the bank's AI gateway. I also handle production incidents, root cause analysis, and performance work.",
+    count:
+      "More than 100 robots are in production. One process is rarely one robot: disputes alone run separate robots for incoming and outgoing cases, for maker and checker, and for each portal (CIPortal, Artajasa, Prima), next to status checkers and many reporting robots.",
+    timeline: [
+      { year: "2020", text: "Joined in November as a fresh graduate." },
+      { year: "2021", text: "First robots in production: five Treasury journal robots and the first OJK regulatory reports. UiPath certified in January." },
+      { year: "2022", text: "BI-Fast reconciliation, live from the day BI-Fast launched in Indonesia. GL difference journals for ten transaction types." },
+      { year: "2023", text: "Robots that other applications call in real time through the Orchestrator API. Visa and Mastercard settlement with a maker and approver web app. Fund disbursement. First dispute lane, incoming ATM." },
+      { year: "2024", text: "Dispute Resolution System for BI-Fast, incoming and outgoing." },
+      { year: "2025", text: "Outgoing ATM disputes and credit card disputes." },
+      { year: "Now", text: "AI gateway in daily use by 98 users. QR disputes in development." },
+    ],
   },
   {
     when: "May – Sep 2020",
     title: "ICStar RPA Hackathon, 2nd place",
     org: "PT IDStar Cipta Teknologi",
     body: "Built a robot that reconciles third-party Visa transactions. A 2-hour manual process ran in 3–5 minutes, and the 40% human error rate went to zero.",
+  },
+];
+
+// UiPath in depth: each kind of automation I have shipped, with the process that proves it.
+export const depth = [
+  {
+    capability: "Real-time robots",
+    detail: "Robots another application calls through the Orchestrator API. Each request becomes a queue item and a queue trigger starts the job.",
+    slug: "core-banking-realtime-integration",
+  },
+  {
+    capability: "Legacy terminals",
+    detail: "Terminal and Citrix automation on AS400 core banking, with automatic retries for dropped sessions.",
+    slug: "core-banking-realtime-integration",
+  },
+  {
+    capability: "24/7 portal robots",
+    detail: "Maker and checker robots on separate machines work third-party portals that offer no API, and follow each case for days.",
+    slug: "dispute-resolution-system",
+  },
+  {
+    capability: "High-volume cycles",
+    detail: "A pull every 15 minutes, up to 4,000 transactions each at peak hours, built to finish before the next cycle, with two backup robots for late data.",
+    slug: "reconciliation-engine",
+  },
+  {
+    capability: "Unstructured files",
+    detail: "Regex and pattern parsing for raw TXT reports: ten formats for GL journals, plus Visa and Mastercard settlement files.",
+    slug: "gl-difference-journal-automation",
+  },
+  {
+    capability: "Posting with approval",
+    detail: "Robots draft the journals. Makers and approvers sign off in a Laravel app before anything reaches the host.",
+    slug: "visa-mastercard-settlement",
+  },
+  {
+    capability: "Accounting rules",
+    detail: "Branching calculation rules for AFS bonds, split across two robots by trade date and settle date.",
+    slug: "treasury-journal-automation",
+  },
+  {
+    capability: "Reporting robots",
+    detail: "Eight robots that build OJK and operational reports from web apps, desktop apps, a data warehouse, and SFTP.",
+    slug: "monitoring-reporting-automation",
+  },
+  {
+    capability: "Exception handling",
+    detail: "REFramework throughout. System exceptions retry, business exceptions stop with a reason, and a changed input format stops the robot before it posts.",
+    slug: "gl-difference-journal-automation",
+  },
+  {
+    capability: "AI inside a robot",
+    detail: "A distorted captcha read by Tesseract OCR and checked by an LLM, so the daily pull runs unattended.",
+    slug: "monitoring-reporting-automation",
+  },
+  {
+    capability: "AI platform",
+    detail: "The bank's LLM gateway on Bifrost, customized in Go, used by 98 developers, analysts, and testers from Claude Code.",
+    slug: "enterprise-ai-gateway",
   },
 ];
 
@@ -797,11 +892,11 @@ export const skills = [
   },
   {
     group: "Software",
-    items: ["PHP (Laravel)", "REST APIs", "JavaScript", "Node.js", "Go", "HTML/CSS", "jQuery"],
+    items: ["PHP (Laravel)", "REST APIs", "JavaScript", "Go", "HTML/CSS", "jQuery"],
   },
   {
     group: "Infrastructure",
-    items: ["Docker", "GitLab CI", "GitHub Actions", "Linux (Ubuntu)", "Windows Server", "Nginx", "Apache"],
+    items: ["Docker", "GitLab CI", "Git (GitLab, GitHub)", "Linux (Ubuntu)", "Windows Server", "Nginx", "Apache"],
   },
   {
     group: "Data",
@@ -818,24 +913,25 @@ export const certifications = [
 // Time compression chart. Minutes drive the bar length (60 min = full width);
 // the labels are what the reader sees, taken from each project's results.
 export const compression = [
-  { slug: "dispute-resolution-system", label: "Dispute, per transaction", manual: 60, auto: 10, manualLabel: "1 h", autoLabel: "5–10 min" },
-  { slug: "visa-mastercard-settlement", label: "Visa settlement", manual: 60, auto: 10, manualLabel: "60 min", autoLabel: "10 min" },
-  { slug: "gl-difference-journal-automation", label: "GL difference journals", manual: 60, auto: 15, manualLabel: ">1 h", autoLabel: "~15 min" },
-  { slug: "fund-disbursement-automation", label: "Fund disbursement, send to host", manual: 60, auto: 5, manualLabel: "60 min", autoLabel: "0–5 min" },
-  { slug: "visa-mastercard-settlement", label: "Mastercard settlement", manual: 45, auto: 7, manualLabel: "45 min", autoLabel: "7 min" },
+  { slug: "dispute-resolution-system", label: "Dispute Resolution System (BI-Fast, ATM, credit card)", manual: 60, auto: 10, manualLabel: "1 h", autoLabel: "10 min" },
+  { slug: "visa-mastercard-settlement", label: "Visa & Mastercard Settlement (per day)", manual: 90, auto: 20, manualLabel: "1.5 h", autoLabel: "15–20 min" },
+  { slug: "gl-difference-journal-automation", label: "GL Difference Journals (per day, 10 transaction types)", manual: 60, auto: 5, manualLabel: "1 h", autoLabel: "5 min" },
+  { slug: "fund-disbursement-automation", label: "Fund Disbursement (per day, 6 transaction types)", manual: 30, auto: 5, manualLabel: "30 min", autoLabel: "5 min" },
   { slug: "core-banking-realtime-integration", label: "Core banking, customer data update", manual: 30, auto: 10, manualLabel: "30 min", autoLabel: "10 min" },
-  { slug: "treasury-journal-automation", label: "Treasury journal", manual: 30, auto: 5, manualLabel: "30 min", autoLabel: "3–5 min" },
-  { slug: "monitoring-reporting-automation", label: "OJK regulatory report", manual: 15, auto: 3, manualLabel: "10–15 min", autoLabel: "2–3 min" },
+  { slug: "treasury-journal-automation", label: "Treasury Journal (per process)", manual: 30, auto: 5, manualLabel: "30 min", autoLabel: "5 min" },
+  { slug: "monitoring-reporting-automation", label: "Monitoring & Reporting (per report)", manual: 10, auto: 3, manualLabel: "10 min", autoLabel: "3 min" },
 ];
 
-// People needed before and after, from each project's results. `manual` and
-// `auto` drive the squares (upper end of a range); the labels are what readers see.
+// People running each process by hand, before and after. Figures given by Norma.
+// 0 means nobody runs it anymore; the team only monitors it in the app.
 export const staffing = [
-  { slug: "dispute-resolution-system", label: "Dispute desk", manual: 15, auto: 4, manualLabel: "10–15", autoLabel: "4", note: "2 makers, 2 approvers" },
-  { slug: "visa-mastercard-settlement", label: "Visa & Mastercard settlement", manual: 4, auto: 1, manualLabel: "2–4", autoLabel: "1", note: "monitoring" },
-  { slug: "treasury-journal-automation", label: "Treasury journals", manual: 3, auto: 1, manualLabel: "3", autoLabel: "1", note: "supervisor" },
-  { slug: "gl-difference-journal-automation", label: "GL difference journals", manual: 2, auto: 1, manualLabel: "2", autoLabel: "1", note: "supervisor" },
-  { slug: "fund-disbursement-automation", label: "Fund disbursement", manual: 2, auto: 1, manualLabel: "2", autoLabel: "1", note: "monitoring" },
+  { slug: "dispute-resolution-system", label: "Dispute Resolution System", manual: 10, auto: 4, manualLabel: "10", autoLabel: "4", note: "maker and checker" },
+  { slug: "visa-mastercard-settlement", label: "Visa & Mastercard Settlement", manual: 4, auto: 2, manualLabel: "4", autoLabel: "2", note: "maker and checker" },
+  { slug: "treasury-journal-automation", label: "Treasury Journal", manual: 2, auto: 0, manualLabel: "2", autoLabel: "0", note: "monitoring only" },
+  { slug: "gl-difference-journal-automation", label: "GL Difference Journals", manual: 1, auto: 0, manualLabel: "1", autoLabel: "0", note: "monitoring only" },
+  { slug: "fund-disbursement-automation", label: "Fund Disbursement", manual: 1, auto: 0, manualLabel: "1", autoLabel: "0", note: "monitoring only" },
+  { slug: "core-banking-realtime-integration", label: "Core Banking, customer data update", manual: 1, auto: 0, manualLabel: "1", autoLabel: "0", note: "monitoring only" },
+  { slug: "monitoring-reporting-automation", label: "Monitoring & Reporting", manual: 1, auto: 0, manualLabel: "1", autoLabel: "0", note: "sent automatically" },
 ];
 
 export const education = {

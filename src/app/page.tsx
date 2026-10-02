@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Compression from "@/components/Compression";
 import Credentials from "@/components/Credentials";
 import Registry from "@/components/Registry";
@@ -5,7 +6,7 @@ import Portrait from "@/components/Portrait";
 import { Section } from "@/components/Section";
 import SplitHeading from "@/components/SplitHeading";
 import Staffing from "@/components/Staffing";
-import { certifications, education, experience, profile, projects, skills } from "@/data/site";
+import { certifications, depth, education, experience, profile, projects, skills } from "@/data/site";
 
 export default function Home() {
   return (
@@ -45,6 +46,17 @@ export default function Home() {
         </div>
       </header>
 
+      <div className="page">
+        <dl className="facts" aria-label="Track record">
+          {profile.facts.map((f) => (
+            <div key={f.label} className="fact">
+              <dt className="fact-value">{f.value}</dt>
+              <dd className="fact-label">{f.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
       <Compression />
       <Staffing />
 
@@ -52,7 +64,29 @@ export default function Home() {
         <Registry projects={projects} />
       </Section>
 
-      <Section id="experience" index="02" title="Experience">
+      <Section id="uipath" index="02" title="UiPath in depth">
+        <p className="sec-lead">
+          Six years on UiPath, starting with a hackathon robot in 2020. These are the kinds of automation I have
+          shipped, each with the process where it runs in production.
+        </p>
+        <table className="table depth">
+          <tbody>
+            {depth.map((d) => (
+              <tr key={d.capability}>
+                <th scope="row">{d.capability}</th>
+                <td>{d.detail}</td>
+                <td className="depth-link">
+                  <Link href={`/projects/${d.slug}`}>
+                    {projects.find((p) => p.slug === d.slug)?.title} →
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Section>
+
+      <Section id="experience" index="03" title="Experience">
         {experience.map((e) => (
           <div key={e.title} className="entry">
             <p className="entry-when mono">{e.when}</p>
@@ -60,6 +94,19 @@ export default function Home() {
               <h3 className="entry-title">{e.title}</h3>
               <p className="entry-org">{e.org}</p>
               <p className="entry-body">{e.body}</p>
+              {e.count && <p className="entry-body">{e.count}</p>}
+              {e.timeline && (
+                <table className="table entry-timeline">
+                  <tbody>
+                    {e.timeline.map((t) => (
+                      <tr key={t.year}>
+                        <td className="mono date">{t.year}</td>
+                        <td>{t.text}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         ))}
@@ -73,7 +120,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section id="skills" index="03" title="Skills">
+      <Section id="skills" index="04" title="Skills">
         <table className="table skills">
           <tbody>
             {skills.map((g) => (
@@ -86,7 +133,7 @@ export default function Home() {
         </table>
       </Section>
 
-      <Section id="certifications" index="04" title="Certifications">
+      <Section id="certifications" index="05" title="Certifications">
         <table className="table">
           <tbody>
             {certifications.map((c) => (
@@ -102,7 +149,8 @@ export default function Home() {
       </Section>
 
       <section id="contact" className="contact page">
-        <p className="eyebrow mono">05 · Contact</p>
+        <p className="eyebrow mono">06 · Contact</p>
+        <p className="contact-note">{profile.contactNote}</p>
         <a className="contact-mail display-m" href={`mailto:${profile.email}`}>
           {profile.email}
         </a>

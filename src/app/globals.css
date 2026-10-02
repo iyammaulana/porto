@@ -58,8 +58,25 @@
   color-scheme: light;
 }
 
+/* Dark palette. Applies when the visitor picks Dark with the theme button
+   (data-theme="dark"), or when they have not picked and the device is dark.
+   Picking Light (data-theme="light") always wins over the device setting. */
+:root[data-theme="dark"] {
+  --bg: #000000;
+  --bg-2: #1c1c1e;
+  --label: #ffffff;
+  --label-2: #98989d;
+  --label-3: #636366;
+  --separator: #38383a;
+  --link: #5cb8ff;
+  --success: #4ad968;
+  --error: #ff6165;
+  --link-tint: rgba(92, 184, 255, 0.14);
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #000000;
     --bg-2: #1c1c1e;
     --label: #ffffff;
@@ -240,16 +257,35 @@ a:hover {
   font-weight: 600;
 }
 
-.topbar-links {
+.topbar-right {
   display: flex;
+  align-items: center;
   gap: var(--s-5);
   margin-left: auto;
 }
 
-.topbar-clock {
-  font-size: var(--t-caption1);
+.topbar-links {
+  display: flex;
+  gap: var(--s-5);
+}
+
+/* Theme switch: the last nav item, styled like the links ("Theme: Auto"). */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--label-2);
+  font: inherit;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--label);
+  text-decoration: underline;
 }
 
 /* Hero */
@@ -258,7 +294,7 @@ a:hover {
    across the page, then description on the left and a small portrait on the
    right; the two blocks are centred against each other. A hairline closes the hero. */
 .hero {
-  padding-block: var(--s-8) var(--s-9);
+  padding-block: var(--s-8) var(--s-7);
   border-bottom: var(--hairline) solid var(--separator);
 }
 
@@ -576,6 +612,42 @@ a:hover {
   color: var(--label-2);
 }
 
+/* Fact tiles under the hero, after the first draft (v0): large value, small
+   label, hairline between columns. */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-5) var(--s-5) var(--s-5) 0;
+}
+
+.fact + .fact {
+  padding-left: var(--s-5);
+  border-left: var(--hairline) solid var(--separator);
+}
+
+.fact-value {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-display-s);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.fact-label {
+  margin: 0;
+  font-size: var(--t-subhead);
+  line-height: 20px;
+  color: var(--label-2);
+}
+
 /* Home sections */
 
 .sec {
@@ -695,6 +767,33 @@ a:hover {
   color: var(--label-2);
 }
 
+.sec-lead {
+  max-width: var(--w-text);
+  margin-bottom: var(--s-6);
+  font-size: var(--t-title3);
+  line-height: 28px;
+  color: var(--label-2);
+}
+
+/* UiPath in depth: capability, what it means, where it runs. */
+
+.depth th {
+  width: 200px;
+  white-space: normal;
+}
+
+.depth td {
+  font-size: var(--t-body);
+  line-height: 25px;
+}
+
+.depth .depth-link {
+  width: 260px;
+  font-size: var(--t-subhead);
+  line-height: 25px;
+  text-align: right;
+}
+
 /* Entries */
 
 .entry {
@@ -730,6 +829,20 @@ a:hover {
 .entry-body {
   margin-top: var(--s-2);
   max-width: var(--w-text);
+}
+
+.entry-body + .entry-body {
+  margin-top: var(--s-3);
+}
+
+.entry-timeline {
+  margin-top: var(--s-5);
+  max-width: var(--w-text);
+  border-top: var(--hairline) solid var(--separator);
+}
+
+.entry-timeline .date {
+  width: 72px;
 }
 
 /* Tables */
@@ -886,9 +999,16 @@ a:hover {
   padding-block: var(--s-12);
 }
 
+.contact-note {
+  margin-top: var(--s-5);
+  font-size: var(--t-title3);
+  line-height: 28px;
+  color: var(--label-2);
+}
+
 .contact-mail {
   display: inline-block;
-  margin-top: var(--s-5);
+  margin-top: var(--s-2);
   color: var(--label);
   text-decoration: none;
   word-break: break-all;
@@ -986,6 +1106,14 @@ a:hover {
   font-size: var(--t-display-s);
   line-height: 1;
   color: var(--success);
+}
+
+.results-note {
+  max-width: var(--w-text);
+  margin-top: var(--s-4);
+  font-size: var(--t-subhead);
+  line-height: 20px;
+  color: var(--label-2);
 }
 
 .doc-sec {
@@ -1162,15 +1290,25 @@ a:hover {
   .topbar-links {
     display: none;
   }
-
-  .topbar-clock {
-    margin-left: auto;
-  }
 }
 
 /* Small: apple.com breakpoint */
 
 @media (max-width: 734px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fact,
+  .fact + .fact {
+    padding: var(--s-4) 0;
+    border-left: 0;
+  }
+
+  .fact + .fact {
+    border-top: var(--hairline) solid var(--separator);
+  }
+
   .hero-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s-7);
@@ -1242,6 +1380,22 @@ a:hover {
   .spec th {
     width: auto;
     white-space: normal;
+  }
+
+  .depth tr {
+    display: block;
+    padding-block: var(--s-3);
+    border-bottom: var(--hairline) solid var(--separator);
+  }
+
+  .depth th,
+  .depth td,
+  .depth .depth-link {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+    text-align: left;
   }
 
   .result + .result {

@@ -9,7 +9,8 @@ import { compression } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const FULL = 60; // minutes that fill the whole track
+// Minutes that fill the whole track: the longest manual time in the list.
+const FULL = Math.max(...compression.map((c) => c.manual));
 const totalManual = compression.reduce((s, c) => s + c.manual, 0);
 const totalAuto = compression.reduce((s, c) => s + c.auto, 0);
 
@@ -98,7 +99,7 @@ export default function Compression() {
           ))}
         </ol>
         <p className="compress-scale mono">
-          Dashed outline: manual time. Solid bar: automated time. Full width = 60 minutes.
+          Dashed outline: manual time. Solid bar: automated time. Full width = {FULL} minutes.
         </p>
       </div>
     </section>

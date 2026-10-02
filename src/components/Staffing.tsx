@@ -51,7 +51,7 @@ export default function Staffing() {
     <section ref={root} className="compress staff" aria-labelledby="staff-title">
       <div className="page">
         <div className="compress-head">
-          <p className="eyebrow mono">People per process, manual → automated</p>
+          <p className="eyebrow mono">People per project, manual → automated</p>
           <h2 id="staff-title" className="display-m">
             <span ref={total} className="mono-num">
               {totalAuto}
@@ -59,8 +59,8 @@ export default function Staffing() {
             people
           </h2>
           <p className="compress-note">
-            Across the five processes below, using the upper end of every range. By hand: {totalManual} people. The
-            people who stay supervise the robots and approve postings.
+            People running the processes below by hand. Before: {totalManual}. Where the count is 0, nobody runs the
+            process anymore and the team only monitors it in the app.
           </p>
         </div>
 
@@ -87,7 +87,7 @@ export default function Staffing() {
             </li>
           ))}
         </ol>
-        <p className="compress-scale mono">One square per person. Outline: no longer needed. Solid: still on the process.</p>
+        <p className="compress-scale mono">One square per person. Outline: no longer needed. Solid: still working on it.</p>
       </div>
     </section>
   );
