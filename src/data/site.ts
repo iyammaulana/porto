@@ -46,6 +46,9 @@ export type Project = {
   slug: string;
   title: string;
   kind: "RPA" | "RPA + Web app" | "Integration" | "AI platform";
+  // Featured processes lead the home page with role, outcome, and a log excerpt.
+  featured?: boolean;
+  outcome?: string;
   summary: string;
   role: string;
   since?: string;
@@ -57,7 +60,24 @@ export type Project = {
   // How the numbers above were measured, shown under the results.
   resultsNote?: string;
   context: string;
-  built: string[];
+  // Short case-study format for the project page. When present, the page shows
+  // only: summary, results, problem, what I built, one flow, hard parts, role, stack.
+  story?: {
+    problem: string;
+    built: { title: string; body: string; icon?: "robot" | "web"; rows?: [string, string][] }[];
+    // Optional: one short flow, for systems that really have a single path.
+    flow?: { actor: Actor; branch?: string; text: string }[];
+    // The process as a chain of stages, drawn left to right.
+    pipeline?: { title?: string; stages: string[] };
+  };
+  // Lanes or modules the system covers, shown as a table.
+  lanes?: { lane: string; counterpart: string; released: string }[];
+  built?: string[];
+  // When set, robots and process log are shown together under this heading.
+  logLabel?: string;
+  logIntro?: string;
+  // A second named part of the system, described in blocks of text or two-column rows.
+  part?: { title: string; intro: string; blocks?: { title: string; body?: string; rows?: [string, string][] }[] };
   robots?: { name: string; body: string }[];
   logs: { title?: string; steps: { actor: Actor; branch?: string; text: string }[] }[];
   logNote?: string;
@@ -65,15 +85,19 @@ export type Project = {
   decisions?: { title: string; body: string }[];
   note?: string;
   stack: string[];
+  // Same items as `stack`, grouped for reading. When present, the page shows the groups.
+  stackGroups?: { group: string; items: string[] }[];
 };
 
 export const projects: Project[] = [
   {
     slug: "dispute-resolution-system",
+    featured: true,
+    outcome: "Ten people on the dispute desk became four, and a transaction that took an hour takes 10 minutes.",
     title: "Dispute Resolution System",
     kind: "RPA + Web app",
     summary:
-      "A maker robot and a checker robot work the bank's dispute tickets on BI-Fast and ATM portals around the clock. People approve every posting in a Laravel web app. The system replaced a 10-person manual operation.",
+      "Dispute handling for BI-Fast, ATM, and credit card in one system. A maker robot and a checker robot work BI-Fast and ATM tickets on third-party portals around the clock. Credit card cases, the largest share, run through maker queues, approval, and automatic posting. It replaced a 10-person manual operation.",
     role: "Individual contributor: process analysis, design, development, maintenance",
     since: "2023",
     status: "RUNNING",
@@ -81,25 +105,46 @@ export const projects: Project[] = [
     registry: { trigger: "Portal poll + API", runs: "24/7", result: "1 h → 10 min" },    spec: [
       { label: "Trigger", value: "Polling third-party portals (incoming), call center API (outgoing)" },
       { label: "Runs", value: "24/7" },
-      { label: "Input", value: "Dispute tickets on CIPortal, Artajasa, and Prima. Cases from the call center." },
-      { label: "Output", value: "Ticket status and messages on the portal, case records in DRS, postings approved by people" },
-      { label: "Robots", value: "Maker, checker, and a terminal robot for AS400" },
+      { label: "Robots", value: "Maker and checker robots on the portals, and a terminal robot on AS400 for credit card fraud reports" },
       { label: "Build time", value: "About 1 month per dispute lane, 7 weeks for credit card" },
     ],
     results: [
       { measure: "People on the dispute desk", before: "10", after: "4" },
       { measure: "Average time per transaction", before: "1 h", after: "10 min" },
     ],
-    resultsNote:
-      "Average hands-on time for one transaction across BI-Fast, ATM, and credit card disputes. Time spent waiting for the other bank or for Visa is not counted. Four people remain because every posting still passes a maker and a checker.",
+    story: {
+      problem:
+        "Ten people handled disputes by hand, about an hour per transaction: open the portal, find the transaction, check it against reconciliation data, update the ticket, prepare the posting. The work was slow and open to human error. Every ticket on the portals also carries a deadline, and a late response means a reprimand and a fine, so claims need an answer faster than a manual team can give.",
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "Maker and checker robots work the dispute tickets on CIPortal, Artajasa, and Prima around the clock, incoming and outgoing. They pick up new claims, respond or file on the portal, scrape the transaction data, check it against reconciliation data, and follow each ticket to the other bank's final answer. Another robot enters TC40 fraud reports for credit card cases on the AS400 terminal.",
+        },
+        {
+          title: "DRS web application",
+          icon: "web",
+          body: "A Laravel system for the people who work the cases. For BI-Fast and ATM it gives a dashboard, a list with the full detail of every transaction, and maker and checker posting through Open API. Credit card disputes are resolved entirely in the app: cases arrive from the call center and are verified against the card data warehouse, the maker classifies the case and picks its actions (temporary credit, card flag, fraud report, write-off), the approver signs off, and the system posts to card core banking through Open API, then tracks the case with Visa until it closes.",
+        },
+      ],
+    },
     context:
       "A dispute starts at the call center, moves to another bank or a card network, waits days for an answer, and ends when money moves in or out of an account. Before this system, 10 makers and approvers did every step by hand: checking third-party portals, matching reconciliation data, preparing postings.",
-    built: [
-      "One system across four lanes: BI-Fast, ATM on two switching networks, credit card, and closed card and service-charge waivers.",
-      "The robots that operate the third-party portals, and the web app where human makers and checkers approve postings.",
-      "Credit card disputes with separate maker queues, lookups against the card data warehouse to verify each transaction, approver sign-off, and a monitoring stage before the case closes. Communication with Visa keeps part of this lane manual.",
-      "Released lane by lane: incoming ATM in 2023, BI-Fast incoming and outgoing in 2024, outgoing ATM and credit card in 2025.",
+    lanes: [
+      { lane: "BI-Fast, incoming and outgoing", counterpart: "CIPortal (Bank Indonesia)", released: "2024" },
+      { lane: "ATM transfers and cash withdrawals, incoming and outgoing", counterpart: "Artajasa, Prima", released: "2023, 2025" },
+      { lane: "Credit card, denied and disputed transactions", counterpart: "Visa", released: "2025" },
+      { lane: "Closed card and service-charge waivers", counterpart: "Call center, core banking", released: "In production" },
+      { lane: "QR", counterpart: "", released: "In development" },
     ],
+    logLabel: "BI-Fast and ATM disputes",
+    logIntro:
+      "These lanes run on third-party portals that offer no API, so robots do the portal work and DRS keeps the case state.",
+    part: {
+      title: "Credit card disputes",
+      intro:
+        "Credit card is the lane with the most cases. A case comes in from the call center, is verified against the card data warehouse, and goes to one of two maker queues: denied transactions or disputed details. After the approver signs off, the system carries out each action by the route that fits it: Open API for postings to card core banking, a robot on the AS400 terminal for fraud reports that have no API, and the call center API for comments. A monitoring stage then follows the case with Visa until it closes.",
+    },
     robots: [
       {
         name: "Maker robot",
@@ -109,54 +154,27 @@ export const projects: Project[] = [
         name: "Checker robot",
         body: "Approves every status change the maker robot makes. It runs on a separate machine, so the portal's dual control holds without a person waiting on it.",
       },
-      {
-        name: "Terminal robot",
-        body: "Files fraud reports (TC40) directly on the AS400 core banking terminal for credit card cases, where no service or API exists.",
-      },
     ],
     logs: [
       {
         title: "Incoming: another bank claims against us",
         steps: [
-          { actor: "ROBOT", text: "New claim found on the portal" },
-          { actor: "ROBOT", text: "Status New → In Progress, approved by the checker robot" },
-          { actor: "ROBOT", text: "Message to the claiming bank: under review" },
-          { actor: "ROBOT", text: "Transaction data scraped into the DRS database" },
-          { actor: "SYSTEM", text: "Lookup against reconciliation data" },
-          {
-            actor: "ROBOT",
-            branch: "MATCH",
-            text: "Reply with the credit time, wait for the other bank's answer or the ticket's expiry, set Initiate Completed",
-          },
-          {
-            actor: "HUMAN",
-            branch: "UNMATCH",
-            text: "Posting to the account through Open API, approved by a maker and a checker",
-          },
+          { actor: "ROBOT", text: "New claim found on the portal. Status set to In Progress, approved by the checker robot" },
+          { actor: "ROBOT", text: "Claiming bank notified, transaction data scraped into DRS" },
+          { actor: "ROBOT", text: "Lookup against reconciliation data" },
+          { actor: "ROBOT", branch: "MATCH", text: "Reply with the credit time, close the dispute once the other bank answers" },
+          { actor: "SYSTEM", branch: "UNMATCH", text: "Posted to the account once a maker and a checker approve it in the system" },
         ],
       },
       {
         title: "Outgoing: our customer claims",
         steps: [
-          { actor: "SYSTEM", text: "Case arrives from the call center API" },
-          { actor: "SYSTEM", text: "Lookup against reconciliation data" },
-          {
-            actor: "SYSTEM",
-            branch: "UNMATCH",
-            text: "The transfer failed on our side. Flagged as an exception, the case stops in DRS",
-          },
-          {
-            actor: "ROBOT",
-            branch: "MATCH",
-            text: "Claim filed with the other bank on the portal, approved by the checker robot",
-          },
-          {
-            actor: "ROBOT",
-            text: "Follows the ticket until a credit adjustment arrives or the ticket expires",
-          },
-          { actor: "ROBOT", text: "Outcome written to the DRS database" },
-          { actor: "HUMAN", text: "Maker and checker post the credit in DRS" },
-          { actor: "SYSTEM", text: "Case closed, status returned to the call center" },
+          { actor: "SYSTEM", text: "Case arrives from the call center and is checked against reconciliation data" },
+          { actor: "SYSTEM", branch: "UNMATCH", text: "The transfer failed on our side. Flagged as an exception, the case stops" },
+          { actor: "ROBOT", branch: "MATCH", text: "Claim filed with the other bank on the portal, approved by the checker robot" },
+          { actor: "ROBOT", text: "Follows the ticket until the other bank's final answer, then scrapes it into DRS" },
+          { actor: "SYSTEM", branch: "FAILED", text: "Posted once a maker and a checker approve it. Case closed" },
+          { actor: "SYSTEM", branch: "SUCCESSFUL", text: "Case closed, status returned to the call center" },
         ],
       },
     ],
@@ -182,37 +200,35 @@ export const projects: Project[] = [
     decisions: [
       {
         title: "Robots as the missing API",
-        body: "CIPortal, Artajasa, and Prima have no API. The robots sit behind the same internal interface an API integration would use, so the core of DRS (database, business logic, match decisions) works the same whether a counterparty answers through an API or through a robot.",
+        body: "CIPortal, Artajasa, and Prima have no API. The robots sit behind the same internal interface an API integration would use, so the core of DRS works the same whether a counterparty answers through an API or through a robot.",
       },
       {
-        title: "The SLA runs at night too",
-        body: "Every claim on the portal has a deadline. An expired ticket means a reprimand and a fine for the bank that missed it, so the maker robot picks up new claims at any hour.",
+        title: "A deadline on every ticket",
+        body: "Every ticket carries a deadline, and a late answer means a reprimand and a fine. The robots run unattended around the clock on REFramework: a dropped session or a portal error is retried, a failure sends a Telegram alert, and case state lives in the database, so a restarted robot picks up where it stopped.",
       },
       {
-        title: "Cases that last for days",
-        body: "An outgoing dispute can wait days for another bank or for Visa. Case state lives in the database and is checked again until the case closes.",
-      },
-      {
-        title: "Six posting paths after approval",
-        body: "Each action a maker selects takes the route that fits it. Open API where a service exists, a robot on the AS400 terminal where none does, the call center API for comments, and the database for everything local.",
-      },
-      {
-        title: "People post the money",
-        body: "Every step is automated except the debit and credit postings. Those pass a human maker and checker, and for credit card disputes they sit in two separate departments.",
+        title: "A captcha at the login",
+        body: "One portal puts a captcha on its login. The robot reads it with OCR and an AI model, so an unattended run signs in on its own at any hour.",
       },
     ],
     stack: [
       "UiPath (Unattended)",
+      "UiPath Orchestrator",
       "REFramework",
       "Web scraping",
       "OCR",
       "AI integration",
       "Terminal automation (AS400)",
+      "Database connection",
+      "API & Web Services Integration",
+      "Dynamic UI selectors",
       "Laravel",
       "Bootstrap",
       "jQuery",
       "DataTables",
       "AJAX",
+      "Chart.js",
+      "ApexCharts",
       "Role & permission",
       "REST API integration",
       "Open API & middleware",
@@ -227,14 +243,23 @@ export const projects: Project[] = [
       "Nginx",
       "Linux",
     ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)","UiPath Orchestrator","REFramework","Web scraping","OCR","AI integration","Terminal automation (AS400)","Database connection","API & Web Services Integration","Dynamic UI selectors"] },
+      { group: "Web application", items: ["Laravel","Bootstrap","jQuery","DataTables","AJAX","Chart.js","ApexCharts","Role & permission"] },
+      { group: "Integration", items: ["REST API integration","Open API & middleware","Data warehouse lookup","Telegram notifications"] },
+      { group: "Data", items: ["SQL Server","MySQL","Redis"] },
+      { group: "Infrastructure", items: ["Cron jobs","Git","GitLab","Nginx","Linux"] },
+    ],
   },
   {
     slug: "enterprise-ai-gateway",
+    featured: true,
+    outcome: "98 developers, analysts, and testers use it every day through Claude Code. Rolling out to 200+.",
     title: "Enterprise AI Gateway",
     kind: "AI platform",
     summary:
       "Developers at the bank code with Claude Code, and every request goes through a gateway I built. Each developer has their own key, guardrails check what leaves the bank, and requests fail over when a model hits its limit.",
-    role: "Gateway developer in a cross-team AI platform initiative",
+    role: "Gateway developer in a cross-team AI platform initiative. Guardrail logic comes from the IT security team and the servers from the infrastructure team; the gateway itself is mine.",
     status: "PILOT",
     statusNote: "In daily use, rolling out to 200+ users.",
     registry: { trigger: "API request", runs: "On request", result: "98 users" },    spec: [
@@ -242,12 +267,26 @@ export const projects: Project[] = [
       { label: "Users", value: "98 developers, analysts, and testers. Target 200+." },
       { label: "Input", value: "Prompts from Claude Code, authenticated per developer" },
       { label: "Output", value: "Responses from Claude or GLM, usage and token logs per developer" },
-      { label: "Models", value: "Claude and GLM. Gemini planned." },
+      { label: "Models", value: "Claude (5 accounts) and GLM (2 accounts). Gemini planned." },
     ],
     results: [
       { measure: "Registered users", after: "98" },
-      { measure: "Models behind one endpoint", after: "2, Gemini next" },
+      { measure: "Accounts behind one endpoint: 5 Claude, 2 GLM", after: "7" },
     ],
+    story: {
+      problem:
+        "Developers needed AI to make their work easier and faster. If each of them connected straight to a provider, API keys would sit on every laptop, nobody could see who used what, and source code or customer data could leave the bank inside a prompt. Access had to be managed and monitored in one place.",
+      built: [
+        {
+          title: "Gateway on Bifrost",
+          body: "Compared LiteLLM and Bifrost during development, chose Bifrost, an open-source LLM gateway, and customized it in Go. Each developer gets a key and a limit in place of shared provider keys. Requests are routed to Claude or GLM (via Z.AI) and balanced across seven accounts, five on Claude and two on GLM, by round robin and latency. Claude Code is pointed at the gateway, so developers keep their normal workflow.",
+        },
+        {
+          title: "Guardrails and observability",
+          body: "Every prompt passes the security team's guardrails for PII and prompt injection before it reaches a provider. Usage and tokens per developer land in ClickHouse, read by Langfuse and by the security team's monitoring.",
+        },
+      ],
+    },
     context:
       "Developers wanted Claude Code in their daily work. If each of them connected straight to a provider, API keys would sit on every laptop, nobody could see who used what, and source code or customer data could leave the bank inside a prompt. The gateway sits between Claude Code and every model, so the bank keeps that control and developers keep the tool.",
     built: [
@@ -285,7 +324,11 @@ export const projects: Project[] = [
     decisions: [
       {
         title: "One model was not enough",
-        body: "Early on, a single model took every request and hit its rate limit fast. I added alternative models, and several subscription accounts for the same model so the load spreads across quotas.",
+        body: "Early on, a single model took every request and hit its rate limit fast. I added a second provider and more accounts, now five on Claude and two on GLM, so the load spreads across seven quotas instead of one.",
+      },
+      {
+        title: "Fallback that knows the reset time",
+        body: "When a model hits its limit, requests move to another model or account. The limit and its reset time are stored, so the limited model is skipped until it actually resets instead of being retried pointlessly.",
       },
       {
         title: "Debugging across providers",
@@ -294,9 +337,17 @@ export const projects: Project[] = [
     ],
     note: "Guardrail logic comes from the IT security team and the servers from the infrastructure team. I built the gateway.",
     stack: ["Bifrost", "Go", "Claude Code", "Claude", "GLM (Z.AI)", "Docker", "PostgreSQL", "ClickHouse", "Langfuse"],
+    stackGroups: [
+      { group: "Gateway", items: ["Bifrost", "Go"] },
+      { group: "Models and clients", items: ["Claude Code", "Claude", "GLM (Z.AI)"] },
+      { group: "Data and observability", items: ["PostgreSQL", "ClickHouse", "Langfuse"] },
+      { group: "Infrastructure", items: ["Docker"] },
+    ],
   },
   {
     slug: "core-banking-realtime-integration",
+    featured: true,
+    outcome: "A customer data update went from 30 minutes by hand to 10, and nobody runs it manually anymore.",
     title: "Core Banking Realtime Integration",
     kind: "Integration",
     summary:
@@ -317,8 +368,21 @@ export const projects: Project[] = [
       { measure: "People updating customer data", before: "1", after: "0" },
       { measure: "Update requests per day", after: "25–50+" },
     ],
-    resultsNote:
-      "Nobody updates customer data by hand anymore. The team only monitors the robot.",
+    story: {
+      problem:
+        "Another team's application needed three operations on core banking: customer data updates, credit card blocks, and QRIS merchant onboarding. The core banking system runs on AS400 terminals with no API, so staff did them by hand, 25 to 50 update requests a day at about 30 minutes each, even though a card block has to happen at once and a new merchant is waiting to use QRIS.",
+      built: [
+        {
+          title: "Robots on the AS400",
+          icon: "robot",
+          body: "Three unattended robots on REFramework, one per operation, each on its own server. They sign in to the terminal, run the operation, and report success or failure. A dropped session is retried; invalid data stops the job with a clear reason.",
+        },
+        {
+          title: "Real-time trigger through Orchestrator",
+          body: "The calling application starts a robot through the UiPath Orchestrator API. Each request becomes a queue item, a queue trigger picks it up, and the robot sends a REST callback when it finishes, or the application polls the status. No separate API service had to be built.",
+        },
+      ],
+    },
     context:
       "Another team's application needed three sensitive core banking operations. The core banking system runs on AS400 terminals with no native API, so staff did them by hand, even though a card block has to happen fast and a new merchant is waiting to use QRIS.",
     built: [
@@ -358,6 +422,10 @@ export const projects: Project[] = [
         title: "A queue against race conditions",
         body: "Several requests for the same operation can arrive at once. Each one becomes a queue item and the robot handles one at a time per operation. The core system stays safe and the caller still gets a real-time answer.",
       },
+      {
+        title: "A terminal, not an API",
+        body: "AS400 sessions drop and time out in their own ways. Following REFramework, a system exception such as a lost session is retried automatically, while a business exception such as data not found stops at once and tells the application why.",
+      },
     ],
     stack: [
       "UiPath (Unattended)",
@@ -367,73 +435,15 @@ export const projects: Project[] = [
       "Terminal & Citrix automation",
       "REST",
     ],
-  },
-  {
-    slug: "reconciliation-engine",
-    title: "Reconciliation Engine",
-    kind: "RPA + Web app",
-    summary:
-      "A reconciliation engine for BI-Fast, QR, and Biller that acts on its own results. Matched transactions close, and failed ones are posted or refunded automatically.",
-    role: "Developer: reconciliation engine across BI-Fast, QR, and Biller",
-    since: "2022",
-    status: "RUNNING",
-    statusNote: "Live since the day BI-Fast launched in Indonesia.",
-    registry: { trigger: "Schedule", runs: "Every 15 min", result: "250K+ tx / day" },    spec: [
-      { label: "Trigger", value: "Orchestrator schedule, every 15 minutes" },
-      { label: "Runs", value: "24/7" },
-      { label: "Input", value: "Host data over SFTP, BI-Fast data from CIPortal" },
-      { label: "Output", value: "Match and unmatch results, real-time postings and refunds, Laravel dashboard" },
-      { label: "Volume", value: "About 200,000 BI-Fast transactions a day, up to 4,000 per pull at peak hours. QRIS and Biller add about 50,000." },
-      { label: "Build time", value: "1–2 months for the BI-Fast module" },
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)", "REFramework", "Terminal & Citrix automation"] },
+      { group: "Integration", items: ["Orchestrator API", "Queues & queue triggers", "REST"] },
     ],
-    results: [
-      { measure: "Manual reconciliation automated", after: "85%" },
-      { measure: "Transactions per day", after: "250K+" },
-      { measure: "From pull to result on the dashboard", after: "~30 min" },
-    ],
-    context:
-      "Every transaction has two records: one in the bank's host system and one in the external network, which for BI-Fast is Bank Indonesia's. A gap on either side means money to adjust or refund. At more than 250,000 transactions a day across BI-Fast, QRIS, and Biller, matching by hand is not an option.",
-    built: [
-      "The reconciliation engine for BI-Fast, QR, and Biller.",
-      "A robot that pulls BI-Fast transactions from CIPortal into a staging database every 15 minutes.",
-      "An import engine that loads host data from SFTP into its own staging database.",
-      "Real-time posting and automated refunds for failed transactions.",
-      "A Laravel dashboard with match and unmatch results.",
-    ],
-    logs: [
-      {
-        steps: [
-          { actor: "SYSTEM", text: "Host data lands on SFTP, the import engine loads it into staging" },
-          { actor: "ROBOT", text: "Pulls BI-Fast transactions from CIPortal into staging" },
-          { actor: "SYSTEM", text: "Both sides reconciled" },
-          { actor: "SYSTEM", branch: "MATCH", text: "Transaction closed" },
-          { actor: "SYSTEM", branch: "UNMATCH", text: "Posted in real time or refunded automatically" },
-          { actor: "SYSTEM", text: "Result on the dashboard about 30 minutes after the pull" },
-        ],
-      },
-    ],
-    exceptions: [
-      {
-        type: "SYSTEM",
-        when: "CIPortal data arrives late",
-        then: "A backup robot finds the last recorded trigger time and pulls again from there.",
-      },
-      {
-        type: "SYSTEM",
-        when: "A gap the first backup misses",
-        then: "A user uploads a trigger file to FTP with the exact time range, and a second backup robot pulls it.",
-      },
-    ],
-    decisions: [
-      {
-        title: "A 15-minute cycle that never overlaps",
-        body: "At peak hours a single pull carries 3,000 to more than 4,000 transactions. The robot is built to finish a batch before the next window opens, so two cycles never run at once.",
-      },
-    ],
-    stack: ["UiPath (Unattended)", "REFramework", "SFTP", "Staging databases", "Laravel", "MySQL", "SQL Server", "GitLab CI"],
   },
   {
     slug: "visa-mastercard-settlement",
+    featured: true,
+    outcome: "Daily settlement went from 1.5 hours to 15–20 minutes, and from four people to two.",
     title: "Visa & Mastercard Settlement",
     kind: "RPA + Web app",
     summary:
@@ -453,8 +463,37 @@ export const projects: Project[] = [
       { measure: "Daily settlement, Visa and Mastercard", before: "1.5 h", after: "15–20 min" },
       { measure: "People on settlement", before: "4", after: "2" },
     ],
-    resultsNote:
-      "Time is measured for one person running both settlements end to end, once a day. Two people remain because every posting still passes a maker and a checker.",
+    story: {
+      problem:
+        "Settlement with Visa and Mastercard sets the bank's financial position against two card networks, at billions of rupiah a day. The files arrive as unstructured TXT, and two to four people worked through them by hand in Excel every day, about an hour for Visa and 45 minutes for Mastercard, on a process where a wrong figure goes straight into the books.",
+      pipeline: {
+        title: "One day's settlement, from files to accounting posting",
+        stages: [
+          "Settlement files from Visa and Mastercard, as TXT from card processing",
+          "Read, parsing and extraction",
+          "Data transformation",
+          "Excel processing",
+          "Reconciliation across sources",
+          "Settlement result calculated",
+          "Journal generated and stored in the database",
+          "Web dashboard: maker reviews",
+          "Approver signs off",
+          "Posted to the host through Open API and middleware",
+        ],
+      },
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "Robots find the settlement files for the period, check they are complete, parse the records, and clean and consolidate the data. Excel stays in the pipeline as a working step: templates are filled, calculations run, and results checked. The robots then reconcile the sources by reference and amount, calculate the settlement result, and draft the journals.",
+        },
+        {
+          title: "Settlement web application",
+          icon: "web",
+          body: "A Laravel system on top of the journal database. It shows the status of every settlement file and journal, gives makers and approvers their review and sign-off screens, and posts the approved journals to the host through Open API and middleware.",
+        },
+      ],
+    },
     context:
       "Settlement with Visa and Mastercard sets the bank's financial position against two card networks, at billions of rupiah a day. The files arrive as unstructured TXT. Two to four people processed them by hand in Excel every day.",
     built: [
@@ -498,7 +537,7 @@ export const projects: Project[] = [
     decisions: [
       {
         title: "Reconciliation before any journal",
-        body: "Transactions and amounts from every source must match before the settlement result is calculated. A mistake shows up before a journal exists.",
+        body: "Transactions and amounts from every source must match before the settlement result is calculated. A mistake shows up before a journal exists, not after it is posted.",
       },
       {
         title: "A two-day incident, fixed one layer down",
@@ -506,7 +545,7 @@ export const projects: Project[] = [
       },
       {
         title: "People approve financial postings",
-        body: "The robot's journals are never posted directly. Makers and approvers review them in the web app first, which keeps segregation of duty on a sensitive accounting process.",
+        body: "The robot's journals are never posted directly. A maker and an approver review them in the web app first, which keeps segregation of duty on a sensitive accounting process.",
       },
     ],
     stack: [
@@ -514,11 +553,133 @@ export const projects: Project[] = [
       "REFramework",
       "Orchestrator",
       "Regex",
-      "Excel automation",
+      "Exception Handling & Logging",
+      "Document Processing (unstructured TXT, XML, Excel, PDF)",
       "Laravel",
+      "Bootstrap",
+      "jQuery",
+      "AJAX",
+      "Role & permission",
       "Open API & middleware",
       "MySQL",
       "SQL Server",
+    ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)", "REFramework", "Orchestrator", "Regex", "Exception Handling & Logging", "Document Processing (unstructured TXT, XML, Excel, PDF)"] },
+      { group: "Web application", items: ["Laravel", "Bootstrap", "jQuery", "AJAX", "Role & permission"] },
+      { group: "Integration", items: ["Open API & middleware"] },
+      { group: "Data", items: ["MySQL", "SQL Server"] },
+    ],
+  },
+  {
+    slug: "reconciliation-engine",
+    title: "Reconciliation Engine",
+    kind: "RPA + Web app",
+    summary:
+      "A reconciliation engine for BI-Fast, QR, and Biller that acts on its own results. Matched transactions close, and failed ones are posted or refunded automatically.",
+    role: "Developer: reconciliation engine across BI-Fast, QR, and Biller",
+    since: "2022",
+    status: "RUNNING",
+    statusNote: "Live since the day BI-Fast launched in Indonesia.",
+    registry: { trigger: "Schedule", runs: "Every 15 min", result: "250K+ tx / day" },    spec: [
+      { label: "Trigger", value: "Orchestrator schedule, every 15 minutes" },
+      { label: "Runs", value: "24/7" },
+      { label: "Input", value: "Host data over SFTP, BI-Fast data from CIPortal" },
+      { label: "Output", value: "Match and unmatch results, real-time postings and refunds, Laravel dashboard" },
+      { label: "Volume", value: "About 200,000 BI-Fast transactions a day, up to 4,000 per pull at peak hours. QRIS and Biller add about 50,000." },
+      { label: "Build time", value: "1–2 months for the BI-Fast module" },
+    ],
+    results: [
+      { measure: "Manual reconciliation automated", after: "85%" },
+      { measure: "Transactions per day", after: "250K+" },
+      { measure: "From pull to result on the dashboard", after: "~30 min" },
+    ],
+    story: {
+      problem:
+        "Every transaction has two records: one in the bank's host system and one in the external network, which for BI-Fast is Bank Indonesia's. A gap on either side means money to adjust or refund. At more than 250,000 transactions a day across BI-Fast, QRIS, and Biller, matching by hand is not an option, and BI-Fast was new in Indonesia, so the engine had to work from day one.",
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "A robot pulls BI-Fast transactions from CIPortal every 15 minutes into a staging database, around the clock, and is built to finish each batch before the next window opens. Two backup robots cover late data: one re-pulls from the last recorded trigger time on its own, the other from a time range a user uploads as a trigger file.",
+        },
+        {
+          title: "Reconciliation engine and dashboard",
+          icon: "web",
+          body: "An import engine loads host data from SFTP into its own staging database. The two sides are reconciled, matched transactions close, and failed ones are posted in real time or refunded automatically. A Laravel dashboard shows the match and unmatch results about 30 minutes after each pull.",
+        },
+      ],
+    },
+    context:
+      "Every transaction has two records: one in the bank's host system and one in the external network, which for BI-Fast is Bank Indonesia's. A gap on either side means money to adjust or refund. At more than 250,000 transactions a day across BI-Fast, QRIS, and Biller, matching by hand is not an option.",
+    built: [
+      "The reconciliation engine for BI-Fast, QR, and Biller.",
+      "A robot that pulls BI-Fast transactions from CIPortal into a staging database every 15 minutes.",
+      "An import engine that loads host data from SFTP into its own staging database.",
+      "Real-time posting and automated refunds for failed transactions.",
+      "A Laravel dashboard with match and unmatch results.",
+    ],
+    logs: [
+      {
+        steps: [
+          { actor: "SYSTEM", text: "Host data lands on SFTP, the import engine loads it into staging" },
+          { actor: "ROBOT", text: "Pulls BI-Fast transactions from CIPortal into staging" },
+          { actor: "SYSTEM", text: "Both sides reconciled" },
+          { actor: "SYSTEM", branch: "MATCH", text: "Transaction closed" },
+          { actor: "SYSTEM", branch: "UNMATCH", text: "Posted in real time or refunded automatically" },
+          { actor: "SYSTEM", text: "Result on the dashboard about 30 minutes after the pull" },
+        ],
+      },
+    ],
+    exceptions: [
+      {
+        type: "SYSTEM",
+        when: "CIPortal data arrives late",
+        then: "A backup robot finds the last recorded trigger time and pulls again from there.",
+      },
+      {
+        type: "SYSTEM",
+        when: "A gap the first backup misses",
+        then: "A user uploads a trigger file to FTP with the exact time range, and a second backup robot pulls it.",
+      },
+    ],
+    decisions: [
+      {
+        title: "A 15-minute cycle that never overlaps",
+        body: "Each pull carries up to 4,000 transactions at peak hours. The robot is built to finish a batch before the next window opens, so two cycles never run at once.",
+      },
+      {
+        title: "Two backup robots for late data",
+        body: "Data from CIPortal sometimes arrives late. One backup robot finds the last recorded trigger time and pulls again from there. A second runs from a trigger file a user uploads with the exact time range, for whatever the first one misses.",
+      },
+    ],
+    stack: [
+      "UiPath (Unattended)",
+      "REFramework",
+      "API & Web Services Integration",
+      "Data Scraping & Extraction",
+      "Database & Shared Folder connection",
+      "Telegram integration",
+      "Laravel",
+      "Bootstrap",
+      "jQuery",
+      "DataTables",
+      "AJAX",
+      "Chart.js",
+      "ApexCharts",
+      "Role & permission",
+      "SFTP",
+      "Staging databases",
+      "MySQL",
+      "SQL Server",
+      "GitLab CI",
+    ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)", "REFramework", "API & Web Services Integration", "Data Scraping & Extraction", "Database & Shared Folder connection", "Telegram integration"] },
+      { group: "Web application", items: ["Laravel", "Bootstrap", "jQuery", "DataTables", "AJAX", "Chart.js", "ApexCharts", "Role & permission"] },
+      { group: "Integration", items: ["SFTP"] },
+      { group: "Data", items: ["Staging databases","MySQL","SQL Server"] },
+      { group: "Infrastructure", items: ["GitLab CI"] },
     ],
   },
   {
@@ -526,7 +687,7 @@ export const projects: Project[] = [
     title: "Treasury Journal Automation",
     kind: "RPA",
     summary:
-      "Five robots that calculate and post the daily GL journals for Treasury Operations: retail bond tax, MTM options, securities tax, AFS bonds, and RTGS fees.",
+      "Six robots that calculate and post the daily GL journals for Treasury Operations: retail bond tax, MTM options, securities tax, AFS bonds by trade date and by settle date, and RTGS fees.",
     role: "Individual contributor: process analysis, solution design, development",
     since: "2021",
     status: "RUNNING",
@@ -535,7 +696,7 @@ export const projects: Project[] = [
       { label: "Runs", value: "Daily" },
       { label: "Input", value: "Transactions from web and desktop applications" },
       { label: "Output", value: "CSV journals posted to core banking over SFTP, Laravel monitoring dashboard" },
-      { label: "Robots", value: "Five processes, AFS bonds split across two robots, plus an environment setup robot" },
+      { label: "Robots", value: "Six processes, with AFS bonds split into trade date and settle date, plus an environment setup robot" },
       { label: "Build time", value: "5–10 working days per process, 15 for AFS bonds" },
     ],
     results: [
@@ -544,13 +705,41 @@ export const projects: Project[] = [
       { measure: "AFS bond journal", before: "60 min", after: "5–10 min" },
       { measure: "Human errors", after: "0" },
     ],
-    resultsNote:
-      "Posting is automatic, so nobody runs these journals by hand anymore. The team only monitors them in the app.",
+    story: {
+      problem:
+        "Treasury Operations ran the same daily journals by hand, every day: pull the data, work through stacked filters, lookups, and business-rule calculations, then post to core banking. Two people spent 30 minutes to an hour per process, and one slip anywhere in that chain meant a wrong posting. The team needed the time back and the accuracy guaranteed, so people could spend their day on work that needs judgment.",
+      pipeline: {
+        title: "One journal, from source to posting",
+        stages: [
+          "Source data: web and desktop apps",
+          "Extraction",
+          "Filtering and validation",
+          "Lookup and matching",
+          "Business rules and calculation",
+          "Debit and credit mapped to GL",
+          "CSV journal generated",
+          "Sent to core banking over SFTP",
+          "Posting result stored and shown on the dashboard",
+        ],
+      },
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "Six robots that share one pipeline: extract from web and desktop sources, filter and validate, look up and match, apply the business rules, map debit and credit to GL, and send the CSV journal to core banking over SFTP. AFS bonds, the most complex, are two of the six, split by trade date and settle date, and a separate setup robot prepares the browser environment before the main run.",
+        },
+        {
+          title: "Monitoring dashboard",
+          icon: "web",
+          body: "A Laravel dashboard for process status, generated journals, delivery and posting status, errors, and history. Posting is automatic, so the team only monitors here.",
+        },
+      ],
+    },
     context:
       "Treasury Operations ran its daily journals by hand in Excel. Volumes were tens to hundreds of transactions a day, but every process stacked filters, lookups, and business-rule calculations. Two people spent 30 minutes to an hour per process, every day.",
     built: [
       "Worked through the manual processes with the Treasury Operations team and picked the ones worth automating.",
-      "Five robots that share one pipeline from extraction to posting.",
+      "Six robots that share one pipeline from extraction to posting.",
       "A Laravel dashboard for process status, journals, delivery and posting status, errors, and history.",
     ],
     logs: [
@@ -588,11 +777,35 @@ export const projects: Project[] = [
         body: "Where a coupon period falls against the trade date and settle date changes the calculation. That is several branching conditions, so I split the work into two robots, one per date.",
       },
       {
+        title: "A setup robot, separate from the business robot",
+        body: "One process needs the browser in IE mode. A dedicated robot configures Edge before the main robot starts, instead of mixing environment setup into business logic.",
+      },
+      {
         title: "Failures stay out of the numbers",
-        body: "In years of production the journal amounts have never been wrong. Every failure so far has been access or environment, such as a changed selector or a blocked account.",
+        body: "In years of production the journal amounts have never been wrong. Every failure so far has been access or environment, such as a changed selector or a blocked account, and each one sends a notification.",
       },
     ],
-    stack: ["UiPath (Unattended)", "REFramework", "Git", "Laravel", "MySQL", "SQL Server", "FTP/SFTP"],
+    stack: [
+      "UiPath (Unattended)",
+      "REFramework",
+      "Web scraping",
+      "Document Processing (Excel, TXT)",
+      "SFTP integration",
+      "Laravel",
+      "Bootstrap",
+      "jQuery",
+      "AJAX",
+      "Role & permission",
+      "MySQL",
+      "SQL Server",
+      "Git",
+    ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)", "REFramework", "Web scraping", "Document Processing (Excel, TXT)", "SFTP integration"] },
+      { group: "Web application", items: ["Laravel", "Bootstrap", "jQuery", "AJAX", "Role & permission"] },
+      { group: "Data", items: ["MySQL", "SQL Server"] },
+      { group: "Infrastructure", items: ["Git"] },
+    ],
   },
   {
     slug: "gl-difference-journal-automation",
@@ -614,8 +827,36 @@ export const projects: Project[] = [
       { measure: "Daily run, 10 transaction types", before: "1 h", after: "5 min" },
       { measure: "People running it", before: "1", after: "0" },
     ],
-    resultsNote:
-      "Total time per day for all ten transaction types, up to the point the journals are sent to the host for posting. Posting is automatic with no maker or checker, so nobody runs it by hand anymore. The team only monitors it in the app.",
+    story: {
+      problem:
+        "The transaction operations division booked GL differences for ten card and payment transaction types by hand, every day: download the third-party TXT reports, read each format, map the values, calculate the adjustment, and post to the host. One person spent about an hour a day on it, and one misread line meant a wrong journal in core banking. The team needed the time back and the posting guaranteed, so people could spend their day on work that needs judgment.",
+      pipeline: {
+        title: "One transaction type, from report to posting",
+        stages: [
+          "Third-party TXT reports from FTP",
+          "File parsing and pattern identification",
+          "Data processing",
+          "Filtering and validation",
+          "Grouping and matching",
+          "Calculation by parameter",
+          "Debit and credit GL determined",
+          "CSV journal sent to core banking over SFTP",
+          "Posting result stored and shown on the dashboard",
+        ],
+      },
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "One pipeline for all ten transaction types. Robots download the reports from FTP, parse each by its own pattern with regex, filter and validate, group and match, calculate, set the debit and credit GL, and send the CSV journal to core banking. They run daily through Orchestrator and check the host response about 10 minutes after sending.",
+        },
+        {
+          title: "Monitoring dashboard",
+          icon: "web",
+          body: "A Laravel dashboard for robot status, parsing results, journals, posting, history, and error details. Posting is automatic, so the team only monitors here.",
+        },
+      ],
+    },
     context:
       "The transaction operations division books GL differences for ten card and payment transaction types. The source is raw TXT reports from third parties, each type in its own format. One person downloaded, read, mapped, and posted them by hand, about an hour a day.",
     built: [
@@ -657,8 +898,33 @@ export const projects: Project[] = [
         title: "Stop rather than post wrong",
         body: "Third parties can change their format at any time. The robot stops on a format it does not recognize. A visible failure in Orchestrator is cheaper than a wrong journal in core banking.",
       },
+      {
+        title: "Late data is the usual failure",
+        body: "Most failures are source files that have not arrived yet. The robot stops with a clear File Not Found, the user chases the data, then runs the robot again from Orchestrator.",
+      },
     ],
-    stack: ["UiPath (Unattended)", "REFramework", "Orchestrator", "Regex", "Laravel", "MySQL", "SQL Server", "FTP/SFTP"],
+    stack: [
+      "UiPath (Unattended)",
+      "REFramework",
+      "Orchestrator",
+      "Regex",
+      "Document Processing (unstructured TXT)",
+      "Exception Handling & Logging",
+      "Laravel",
+      "Bootstrap",
+      "jQuery",
+      "AJAX",
+      "Role & permission",
+      "FTP/SFTP",
+      "MySQL",
+      "SQL Server",
+    ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)","REFramework","Orchestrator","Regex","Document Processing (unstructured TXT)","Exception Handling & Logging"] },
+      { group: "Web application", items: ["Laravel","Bootstrap","jQuery","AJAX","Role & permission"] },
+      { group: "Integration", items: ["FTP/SFTP"] },
+      { group: "Data", items: ["MySQL","SQL Server"] },
+    ],
   },
   {
     slug: "fund-disbursement-automation",
@@ -681,8 +947,35 @@ export const projects: Project[] = [
       { measure: "Daily run, 6 transaction types", before: "30 min", after: "5 min" },
       { measure: "People running it", before: "1", after: "0" },
     ],
-    resultsNote:
-      "Total time per day for all six transaction types, up to posting. Posting is automatic with no maker or checker, so nobody runs it by hand anymore. The team only monitors it in the app.",
+    story: {
+      problem:
+        "Fund disbursement for six payment channels ran by hand, every day of the year: read each channel's settlement report, work out the amount by that channel's rule, create the transfer and its journal, and post it. One person spent about 30 minutes a day on it, and a wrong amount moved real money. The team needed the time back and the accuracy guaranteed, so people could spend their day on work that needs judgment.",
+      pipeline: {
+        title: "One channel, from settlement report to posting",
+        stages: [
+          "Settlement report, mostly unstructured TXT",
+          "Parsing and extraction",
+          "Validation",
+          "Calculation by the channel's business rule",
+          "Transfer transaction and journal formed",
+          "Posted to the target system",
+          "Exception handling and logging",
+          "Monitoring on the dashboard",
+        ],
+      },
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "A robot per channel reads the settlement report, parses and validates it, calculates the amount by that channel's rule, builds the transfer and its journal, and posts to the target system. They run every day, including weekends and public holidays, through Orchestrator, with logging that identifies every failed transaction.",
+        },
+        {
+          title: "Monitoring dashboard",
+          icon: "web",
+          body: "A Laravel dashboard for posting status, next to Orchestrator monitoring. Posting is automatic, so the team only monitors here.",
+        },
+      ],
+    },
     context:
       "This process moves funds between a GL and an account. The amounts come from each channel's settlement report, mostly TXT with little structure. One person read the reports, worked out the amounts, and created the transfers and journals by hand, about 30 minutes a day.",
     built: [
@@ -719,15 +1012,38 @@ export const projects: Project[] = [
         title: "A different rule per channel",
         body: "Most settlement reports have no fixed structure. The robot recognizes each channel's pattern before it extracts values, validates them, and calculates the transfer by that channel's rule.",
       },
+      {
+        title: "When input data is not ready",
+        body: "The most common failure is a source file that has not been delivered yet. It surfaces as a clear File Not Found in Orchestrator; once the data is ready, the user runs the robot again.",
+      },
     ],
-    stack: ["UiPath (Unattended)", "REFramework", "Orchestrator", "Regex", "Laravel", "MySQL", "SQL Server"],
+    stack: [
+      "UiPath (Unattended)",
+      "REFramework",
+      "Orchestrator",
+      "Regex",
+      "Document Processing (unstructured TXT)",
+      "Exception Handling & Logging",
+      "Laravel",
+      "Bootstrap",
+      "jQuery",
+      "AJAX",
+      "Role & permission",
+      "MySQL",
+      "SQL Server",
+    ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)","REFramework","Orchestrator","Regex","Document Processing (unstructured TXT)","Exception Handling & Logging"] },
+      { group: "Web application", items: ["Laravel","Bootstrap","jQuery","AJAX","Role & permission"] },
+      { group: "Data", items: ["MySQL","SQL Server"] },
+    ],
   },
   {
     slug: "monitoring-reporting-automation",
     title: "Monitoring & Reporting Automation",
     kind: "RPA",
     summary:
-      "Eight robots for OJK regulatory reports and operational monitoring. They pull from web apps, desktop apps, a data warehouse, and SFTP, and send finished reports by email.",
+      "Eight robots that monitor systems and build daily and monthly reports for Treasury, IT project management, and other teams, three of them regulatory reports for OJK. They pull from web and desktop apps, a data warehouse, SFTP, and third-party portals, and deliver the result by email or into the databases and folders other teams work from.",
     role: "Individual contributor: process analysis, solution design, development",
     since: "2021",
     status: "RUNNING",
@@ -745,8 +1061,43 @@ export const projects: Project[] = [
       { measure: "People preparing reports", before: "1", after: "0" },
       { measure: "Payment system status checks", after: "3× a day" },
     ],
-    resultsNote:
-      "Reports go straight to their recipients, so nobody prepares them by hand anymore.",
+    story: {
+      problem:
+        "Treasury and IT project management ran a set of recurring monitoring and reporting tasks by hand: check a payment system's status, correct trade dates, pool corporate card transactions, report project progress, pull mutual fund data, and prepare three regulatory reports for OJK. Each one meant logging in somewhere, pulling data, building the report, and sending or filing it, about 10 minutes per report, from three times a day to monthly, with one person doing it all.",
+      pipeline: {
+        title: "Regulatory report, from source to inbox",
+        stages: [
+          "Source data: web app, desktop app, file share, data warehouse",
+          "Extraction",
+          "Lookup, matching and enrichment",
+          "Filtering, mapping and validation",
+          "Data transformation",
+          "Report generated as Excel or PDF in the OJK format",
+          "Automated email delivery",
+        ],
+      },
+      built: [
+        {
+          title: "Robots (UiPath)",
+          icon: "robot",
+          body: "Eight robots, each one built the same way: pull from its sources, look up and enrich the data, validate and transform it, then email the report or store the data where other teams pick it up.",
+          rows: [
+            ["Payment system status check", "3 times a day"],
+            ["Trade-date correction with an HTML report to trading", "Daily"],
+            ["Corporate ride-hailing card pooling for finance and HR", "Daily"],
+            ["Project progress from Jira for IT project management", "Daily"],
+            ["Mutual fund stamp-duty data from a third-party portal", "Daily"],
+            ["Customer bond transactions, for OJK", "Daily"],
+            ["Securities-dealer activity (PPE-EBUS), for OJK", "Monthly"],
+            ["Intragroup transactions with counterparty matching, for OJK", "Monthly"],
+          ],
+        },
+        {
+          title: "Shared notification library",
+          body: "One library for Telegram and WhatsApp notifications that every robot reuses, instead of notification logic rewritten in each project.",
+        },
+      ],
+    },
     context:
       "Treasury prepares regulatory reports for OJK and runs a set of operational monitoring tasks next to them. All of it was manual: staff downloaded reports from source systems and saved them to shared folders for other teams.",
     built: [
@@ -779,6 +1130,14 @@ export const projects: Project[] = [
     ],
     decisions: [
       {
+        title: "Report format separated from data logic",
+        body: "Regulatory formats change. The mapping and layout of each report can be adjusted without touching how the data is fetched and processed, so a format change is a small edit, not a rebuild.",
+      },
+      {
+        title: "A distorted captcha, read with OCR plus an LLM",
+        body: "One source portal sits behind a captcha with strike-through noise that plain OCR reads poorly. The robot combines Tesseract OCR with an LLM call to check the reading before submitting, which made the daily pull fully unattended.",
+      },
+      {
         title: "Email is the dashboard",
         body: "These reports did not need a monitoring dashboard. The email is both the result and the status, so the solution stays as small as the problem.",
       },
@@ -793,6 +1152,11 @@ export const projects: Project[] = [
       "Excel & PDF automation",
       "Telegram Bot API",
     ],
+    stackGroups: [
+      { group: "Robots", items: ["UiPath (Unattended)","Web scraping","Tesseract OCR","LLM API","Excel & PDF automation"] },
+      { group: "Integration", items: ["SFTP","Telegram Bot API"] },
+      { group: "Infrastructure", items: ["Git"] },
+    ],
   },
 ];
 
@@ -806,7 +1170,7 @@ export const experience = [
       "More than 100 robots are in production. One process is rarely one robot: disputes alone run separate robots for incoming and outgoing cases, for maker and checker, and for each portal (CIPortal, Artajasa, Prima), next to status checkers and many reporting robots.",
     timeline: [
       { year: "2020", text: "Joined in November as a fresh graduate." },
-      { year: "2021", text: "First robots in production: five Treasury journal robots and the first OJK regulatory reports. UiPath certified in January." },
+      { year: "2021", text: "First robots in production: six Treasury journal robots and the first OJK regulatory reports. UiPath certified in January." },
       { year: "2022", text: "BI-Fast reconciliation, live from the day BI-Fast launched in Indonesia. GL difference journals for ten transaction types." },
       { year: "2023", text: "Robots that other applications call in real time through the Orchestrator API. Visa and Mastercard settlement with a maker and approver web app. Fund disbursement. First dispute lane, incoming ATM." },
       { year: "2024", text: "Dispute Resolution System for BI-Fast, incoming and outgoing." },

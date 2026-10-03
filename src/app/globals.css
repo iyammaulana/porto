@@ -673,6 +673,140 @@ a:hover {
   padding-top: var(--s-7);
 }
 
+/* Featured processes: no cards, hairlines only. What it is on the left; role,
+   outcome, and results on the right. */
+
+.feats {
+  margin: 0;
+}
+
+.feat {
+  display: grid;
+  grid-template-columns: var(--s-10) minmax(0, 1fr) minmax(0, 440px);
+  gap: var(--s-4) var(--s-7);
+  align-items: start;
+  padding-block: var(--s-8);
+  border-bottom: var(--hairline) solid var(--separator);
+}
+
+.feat:first-child {
+  padding-top: 0;
+}
+
+.feat-idx {
+  font-size: var(--t-caption1);
+  color: var(--label-2);
+  padding-top: var(--s-1);
+}
+
+.feat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  font-size: var(--t-caption1);
+  line-height: 16px;
+  color: var(--label-2);
+}
+
+.feat-title {
+  margin-top: var(--s-2);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-display-s);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.feat-title a {
+  color: var(--label);
+  text-decoration: none;
+}
+
+.feat-title a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
+
+.feat-summary {
+  margin-top: var(--s-4);
+  max-width: var(--w-text);
+}
+
+/* Right column: a ruled panel with role, outcome, then the numbers. */
+.feat-side {
+  border-top: var(--hairline) solid var(--label);
+  padding-top: var(--s-4);
+}
+
+.feat-facts {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: var(--s-3) var(--s-4);
+  margin: 0;
+  font-size: var(--t-subhead);
+  line-height: 20px;
+}
+
+.feat-facts dt {
+  color: var(--label-2);
+}
+
+.feat-facts dd {
+  margin: 0;
+}
+
+.feat-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-7);
+  margin: var(--s-5) 0 0;
+  padding: var(--s-4) 0 0;
+  border-top: var(--hairline) solid var(--separator);
+  list-style: none;
+}
+
+.feat-results li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.feat-value {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-title1);
+  line-height: 34px;
+  white-space: nowrap;
+}
+
+.feat-before {
+  color: var(--label-2);
+}
+
+.feat-label {
+  font-size: var(--t-footnote);
+  line-height: 18px;
+  color: var(--label-2);
+}
+
+.feat-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  margin-top: var(--s-5);
+  font-size: var(--t-subhead);
+}
+
+.sec-sub {
+  margin-top: var(--s-9);
+  padding-bottom: var(--s-3);
+  border-bottom: var(--hairline) solid var(--label);
+  font-size: var(--t-body);
+  line-height: 22px;
+  font-weight: 600;
+}
+
 /* Process registry */
 
 .reg-row {
@@ -680,7 +814,8 @@ a:hover {
   grid-template-columns: var(--s-10) minmax(0, 1fr) auto;
   grid-template-areas:
     "idx title result"
-    "idx meta result";
+    "idx meta result"
+    "idx summary result";
   gap: var(--s-1) var(--s-4);
   align-items: baseline;
   padding-block: var(--s-5);
@@ -704,9 +839,9 @@ a:hover {
   grid-area: title;
   font-family: var(--display);
   font-weight: 600;
-  font-size: var(--t-display-s);
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: var(--t-title1);
+  line-height: 34px;
+  letter-spacing: -0.01em;
 }
 
 .reg-row:hover .reg-title {
@@ -719,6 +854,15 @@ a:hover {
   grid-area: meta;
   font-size: var(--t-caption1);
   line-height: 16px;
+  color: var(--label-2);
+}
+
+.reg-summary {
+  grid-area: summary;
+  max-width: var(--w-text);
+  margin-top: var(--s-1);
+  font-size: var(--t-subhead);
+  line-height: 20px;
   color: var(--label-2);
 }
 
@@ -1108,6 +1252,172 @@ a:hover {
   color: var(--success);
 }
 
+/* Named parts of a system on a project page (for example, credit card disputes). */
+
+.part-intro {
+  max-width: var(--w-text);
+  margin-bottom: var(--s-5);
+}
+
+.part-log {
+  margin-top: var(--s-6);
+}
+
+.part-block {
+  max-width: 820px;
+}
+
+.part-block + .part-block {
+  margin-top: var(--s-6);
+}
+
+.part-block h3 {
+  font-size: var(--t-title3);
+  line-height: 25px;
+  font-weight: 600;
+  margin-bottom: var(--s-2);
+}
+
+.part-table {
+  margin-top: var(--s-3);
+  border-top: var(--hairline) solid var(--separator);
+}
+
+.part-table td:first-child {
+  width: 46%;
+}
+
+.lanes th {
+  white-space: normal;
+}
+
+.lanes td:last-child {
+  white-space: nowrap;
+}
+
+/* Pipeline: stages in a row, joined by arrows; stacks into a column on narrow screens. */
+
+.pipe-title {
+  margin-bottom: var(--s-3);
+  font-size: var(--t-caption1);
+  line-height: 16px;
+  color: var(--label-2);
+}
+
+.pipe-stages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--s-2) 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pipe-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  flex: 1 1 150px;
+  max-width: 220px;
+  margin-right: var(--s-6);
+  padding: var(--s-3);
+  border: var(--hairline) solid var(--separator);
+  background: var(--bg-2);
+  font-size: var(--t-footnote);
+  line-height: 18px;
+}
+
+.pipe-stage:first-child,
+.pipe-stage:last-child {
+  border-color: var(--label);
+  background: var(--bg);
+}
+
+/* Connector: a line with an arrowhead in the gap after each stage. */
+.pipe-stage:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--s-6));
+  width: var(--s-6);
+  height: var(--hairline);
+  background: var(--label-3);
+}
+
+.pipe-stage:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--s-6) - 1px);
+  width: 6px;
+  height: 6px;
+  margin-top: -3.5px;
+  border-top: var(--hairline) solid var(--label-3);
+  border-right: var(--hairline) solid var(--label-3);
+  transform: rotate(45deg);
+}
+
+.pipe-num {
+  font-size: var(--t-caption1);
+  color: var(--label-2);
+}
+
+.pipe-label {
+  color: var(--label);
+}
+
+@media (max-width: 734px) {
+  .pipe-stages {
+    flex-direction: column;
+    gap: var(--s-5);
+  }
+
+  .pipe-stage {
+    flex: none;
+    max-width: none;
+    margin-right: 0;
+  }
+
+  .pipe-stage:not(:last-child)::after {
+    top: auto;
+    right: auto;
+    bottom: calc(-1 * var(--s-5));
+    left: var(--s-4);
+    width: var(--hairline);
+    height: var(--s-5);
+  }
+
+  .pipe-stage:not(:last-child)::before {
+    top: auto;
+    right: auto;
+    bottom: calc(-1 * var(--s-5) - 1px);
+    left: calc(var(--s-4) - 2.5px);
+    margin-top: 0;
+    transform: rotate(135deg);
+  }
+}
+
+.story-block + .story-block {
+  margin-top: var(--s-5);
+}
+
+.story-block h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-body);
+  line-height: 22px;
+  font-weight: 600;
+  margin-bottom: var(--s-2);
+}
+
+.web-icon {
+  display: block;
+  flex-shrink: 0;
+}
+
 .results-note {
   max-width: var(--w-text);
   margin-top: var(--s-4);
@@ -1167,6 +1477,24 @@ a:hover {
   line-height: 25px;
   font-weight: 600;
   margin-bottom: var(--s-2);
+}
+
+/* Grouped stack: category on the left, items in the text face on the right. */
+
+.stack-table {
+  max-width: 820px;
+  border-top: var(--hairline) solid var(--separator);
+}
+
+.stack-table th {
+  width: 180px;
+  font-weight: 400;
+  color: var(--label-2);
+}
+
+.stack-table td {
+  font-size: var(--t-body);
+  line-height: 25px;
 }
 
 .stack {
@@ -1278,6 +1606,16 @@ a:hover {
 /* Medium: apple.com breakpoint */
 
 @media (max-width: 1068px) {
+  .feat {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-5);
+    padding-block: var(--s-7);
+  }
+
+  .feat-idx {
+    display: none;
+  }
+
   .compress-head {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1359,7 +1697,7 @@ a:hover {
 
   .reg-row {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "idx" "title" "meta" "result";
+    grid-template-areas: "idx" "title" "meta" "summary" "result";
   }
 
   .reg-result {
@@ -1377,7 +1715,8 @@ a:hover {
   }
 
   .skills th,
-  .spec th {
+  .spec th,
+  .stack-table th {
     width: auto;
     white-space: normal;
   }

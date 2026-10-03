@@ -169,6 +169,8 @@ Hanya ini. Komponen baru harus ditambahkan ke daftar ini dulu.
 12. **Tabs**: memilih process log bila satu project punya lebih dari satu alur (Radix Tabs).
 13. **Robot**: satu ikon kepala robot bergaris. Hanya di caption potret (16px), penanda aktor `ROBOT` (14px), dan favicon.
 14. **Tombol tema**: item terakhir di navigasi top bar, setelah CV, bergaya seperti link: "Theme: Auto". Tiap klik berganti Auto → Light → Dark → Auto. Auto ikut perangkat; Light dan Dark disimpan di browser. Tetap terlihat di HP saat link section disembunyikan. Jam JKT dihapus dari top bar.
+15. **Process andalan**: blok tanpa kartu, dipisah garis tipis. Kiri: jenis, tahun, status; judul; ringkasan; tautan. Kanan: panel bergaris berisi `My role`, `Outcome`, dan dua angka hasil. Tanpa potongan process log. Susunan dari v0 (andalan tampil besar), isi dari referensi (peran dan hasil di tiap project).
+16. **Baris "More processes"**: judul ukuran Title 1, meta, ringkasan satu-dua kalimat, angka hasil di kanan. Hover tetap memunculkan cuplikan log.
 
 Ditolak:
 
@@ -235,7 +237,7 @@ Uji sebelum menerbitkan teks:
 2. Fakta: tiga kotak sejajar gaya v0, satu per bidang kerja: nilai besar (display-s) dan label kecil, dipisah garis tipis (`100+` robots in production, `250K+` transactions reconciled per day, `~100` users on the AI gateway). Pengecualian yang disetujui Norma untuk larangan "stat banner". Tidak ada kalimat "open to work" di mana pun; ajakan cukup satu kalimat lunak di Contact ("Happy to talk about automation.").
 3. Kompresi waktu.
 4. Kompresi orang.
-5. Processes I built.
+5. Processes I built: empat process andalan tampil besar (Dispute, AI Gateway, Core Banking, Visa & Mastercard), lalu "More processes" sebagai daftar bergaris untuk lima sisanya. Urutan dan penomoran sama dengan halaman project.
 6. UiPath in depth: tabel tiga kolom (jenis otomasi, penjelasan, process yang membuktikannya). Setiap baris wajib menaut ke project nyata.
 7. Experience: paragraf peran, penjelasan hitungan 100+ robot, lalu tabel per tahun (2020 sampai sekarang) dari tanggal rilis di dokumen project. Termasuk hackathon dan pendidikan.
 8. Skills: hanya yang dikonfirmasi Norma dipakai.
@@ -256,6 +258,8 @@ Uji sebelum menerbitkan teks:
 10. Scope (bila ada).
 11. Stack.
 12. Next process.
+
+Project dengan lebih dari satu bagian (contoh: Dispute) memakai susunan tambahan: tabel **Lanes** menggantikan "What I built"; robot dan process log digabung di bawah judul bagiannya ("BI-Fast and ATM disputes"); bagian kedua ("Credit card disputes") ditulis sebagai blok teks berjudul plus tabel dua kolom, bukan tab log tambahan.
 
 ---
 

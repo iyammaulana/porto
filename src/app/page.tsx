@@ -1,12 +1,16 @@
 import Link from "next/link";
 import Compression from "@/components/Compression";
 import Credentials from "@/components/Credentials";
+import Featured from "@/components/Featured";
 import Registry from "@/components/Registry";
 import Portrait from "@/components/Portrait";
 import { Section } from "@/components/Section";
 import SplitHeading from "@/components/SplitHeading";
 import Staffing from "@/components/Staffing";
 import { certifications, depth, education, experience, profile, projects, skills } from "@/data/site";
+
+const featured = projects.filter((p) => p.featured);
+const others = projects.filter((p) => !p.featured);
 
 export default function Home() {
   return (
@@ -61,7 +65,9 @@ export default function Home() {
       <Staffing />
 
       <Section id="processes" index="01" title="Processes I built">
-        <Registry projects={projects} />
+        <Featured projects={featured} />
+        <h3 className="sec-sub">More processes</h3>
+        <Registry projects={others} start={featured.length} />
       </Section>
 
       <Section id="uipath" index="02" title="UiPath in depth">
