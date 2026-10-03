@@ -274,7 +274,7 @@ export const projects: Project[] = [
     ],
     results: [
       { measure: "Registered users", after: "98" },
-      { measure: "Accounts behind one endpoint: 5 Claude, 2 GLM", after: "7" },
+      { measure: "5 Claude, 2 GLM", after: "7" },
     ],
     story: {
       problem:
