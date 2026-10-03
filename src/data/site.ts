@@ -5,8 +5,7 @@
 
 export const profile = {
   name: "Norma Irkham Maulana",
-  // Positioning title for the hero and page title. The official title at the
-  // bank stays in the Experience entry below.
+  // Title used in the hero, the page title, and the Experience entry.
   role: "RPA and Automation Engineer",
   // Second line under the title: the areas of work, then where.
   specialties: ["UiPath", "Laravel", "API integration", "AI gateway"],
@@ -1167,7 +1166,7 @@ export const projects: Project[] = [
 export const experience = [
   {
     when: "Nov 2020 – present",
-    title: "Senior Automation & Software Engineer",
+    title: "RPA and Automation Engineer",
     org: "PT Bank Mega",
     body: "Joined as a fresh graduate in November 2020 and grew into the senior role. I work with business teams to find manual processes worth automating, then design, build, and run the solution: UiPath robots, the Laravel systems around them, core banking integrations, and the bank's AI gateway. I also handle production incidents, root cause analysis, and performance work.",
     count:
