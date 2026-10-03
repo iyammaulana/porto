@@ -306,8 +306,16 @@ a:hover {
 }
 
 .hero-role {
-  font-size: var(--t-subhead);
-  line-height: 20px;
+  margin-top: var(--s-1);
+  font-size: var(--t-title3);
+  line-height: 25px;
+  color: var(--label);
+}
+
+.hero-specialties {
+  margin-top: var(--s-1);
+  font-size: var(--t-footnote);
+  line-height: 18px;
   color: var(--label-2);
 }
 

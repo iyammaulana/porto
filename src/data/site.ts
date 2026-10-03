@@ -5,11 +5,15 @@
 
 export const profile = {
   name: "Norma Irkham Maulana",
-  role: "Senior Automation & Software Engineer",
+  // Positioning title for the hero and page title. The official title at the
+  // bank stays in the Experience entry below.
+  role: "RPA and Automation Engineer",
+  // Second line under the title: the areas of work, then where.
+  specialties: ["UiPath", "Laravel", "API integration", "AI gateway"],
   company: "PT Bank Mega",
   // Hero. The headline is set in page.tsx because "hours" is struck through.
   description:
-    "Senior Automation & Software Engineer at PT Bank Mega since 2020, UiPath Certified. I take a manual process from the first conversation with the business team to a robot running unattended in production, together with the Laravel system around it (dashboards, data lists, monitoring, and maker–checker approval), the core banking integration behind it, and the exception handling that keeps it accurate. I also built the bank's AI gateway, which ~100 developers, analysts, and testers use with Claude Code.",
+    "RPA and automation engineer, six years at PT Bank Mega, UiPath Certified. Bank operations are full of work that is repetitive, time-bound, and unforgiving of mistakes: journals, settlements, disputes, regulatory reports. I have been turning that work into automation that runs on its own, from the first walkthrough with the business team to support in production: more than 100 UiPath robots and the Laravel systems that run the operation around them. Ten people on the dispute desk became four. Daily settlements that took an hour and a half take twenty minutes. And about 100 developers, analysts, and testers now use AI at work safely, through the gateway I built.",
   proof: [
     "100+ robots in production",
     "1–2 h → 3–10 min per process",

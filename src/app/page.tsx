@@ -17,8 +17,9 @@ export default function Home() {
     <main>
       <header className="hero page">
         <h1 className="hero-name">{profile.name}</h1>
-        <p className="hero-role">
-          {profile.role} at {profile.company} · {profile.location}
+        <p className="hero-role">{profile.role}</p>
+        <p className="hero-specialties mono">
+          {[...profile.specialties, `${profile.company}, Jakarta`].join(" · ")}
         </p>
 
         {/* Two fixed lines on tablet and up. */}
