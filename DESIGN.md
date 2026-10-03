@@ -6,6 +6,17 @@ Semua halaman dan konten wajib mengikuti dokumen ini. Semua nilai di CSS memakai
 
 ---
 
+## 0. v3: tampilan (branch `v3`)
+
+Konten, urutan, dan pola konten v2 tidak berubah. Yang berubah hanya tampilannya, mengikuti pola portofolio engineer yang mapan (brittanychiang.com, taniarascia.com, tamalsen.dev):
+
+- **Layout beranda dua kolom** di layar lebar: kolom kiri lengket (nama, posisi, keahlian, headline, tautan section yang mengikuti scroll, kontak, tombol tema); kolom kanan berisi semua section. Di layar sempit kolom kiri jadi blok pembuka biasa dan top bar mengambil alih navigasi. Halaman project tetap memakai top bar.
+- **Palet navy**: latar `#0B1324`, panel `#111C33`, panel terangkat `#182544`, teks `#E6EDF7`, teks sekunder `#9AA9C2`, garis `#243253`, satu aksen mint `#5FE0C2` untuk tautan, angka, dan status aktif. Varian terang: latar `#F7F9FC`, panel putih, aksen `#0F766E`. Default gelap; tombol tema tetap bekerja.
+- **Permukaan**: kotak fakta, blok project andalan, baris daftar, tahap pipeline, dan hasil di halaman project jadi panel berlatar `--bg-2` dengan garis 1px dan sudut 8px; hover mengganti warna garis jadi aksen. Tetap tanpa bayangan, gradien, atau glow.
+- **Aksen** dipakai untuk: angka hasil, indeks section, nomor tahap pipeline, kata "minutes" di headline, dan garis navigasi aktif.
+
+Aturan lain di bawah (tipografi, spacing, copywriting, larangan AI slop) tetap berlaku; satu-satunya pengecualian adalah sudut 8px dan panel berlatar, yang disetujui Norma di v3.
+
 ## 1. Konsep: "Process Registry"
 
 Pekerjaan Norma: merancang, membangun, dan menjaga robot UiPath di production, plus web app, integrasi, dan AI gateway di sekitarnya. Setiap otomasi dikelola sebagai **process**: punya trigger, jadwal, robot yang menjalankannya, jalur exception, dan status. Itu yang dilihat RPA engineer setiap hari di Orchestrator, dan begitu juga cara ia mendokumentasikan solusi (Solution Design Document).

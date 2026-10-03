@@ -2,18 +2,21 @@
    Use tokens only. A raw px value outside this block needs a reason in DESIGN.md. */
 
 :root {
-  /* Color: Apple semantic roles, increased-contrast system colors for text. */
-  --bg: #ffffff; /* systemBackground */
-  --bg-2: #f2f2f7; /* secondarySystemBackground */
-  --label: #000000; /* label */
-  --label-2: #6e6e73; /* secondary text, 5.0:1 on --bg */
-  --label-3: #8e8e93; /* non-text only: icons, outlines (systemGray) */
-  --separator: #c6c6c8; /* opaqueSeparator */
-  --link: #1e6ef4; /* systemBlue, increased contrast, 4.6:1 */
-  --success: #008932; /* systemGreen, increased contrast, 4.5:1 */
-  --error: #e9152d; /* systemRed, increased contrast, 4.5:1 */
-  --link-tint: rgba(30, 110, 244, 0.1);
-  --scrim: rgba(0, 0, 0, 0.6);
+  /* v3 palette: deep navy surfaces with one mint accent. Light variant below. */
+  --bg: #0b1324; /* page */
+  --bg-2: #111c33; /* panels */
+  --bg-3: #182544; /* raised panels, hover */
+  --label: #e6edf7;
+  --label-2: #9aa9c2;
+  --label-3: #5f6f8e; /* non-text only */
+  --separator: #243253;
+  --link: #5fe0c2; /* accent: links, numbers, active states */
+  --link-ink: #06201a;
+  --success: #6ee7a3;
+  --error: #ff7b7b;
+  --link-tint: rgba(95, 224, 194, 0.12);
+  --scrim: rgba(3, 8, 20, 0.75);
+  --radius: 8px;
 
   /* Type: Apple text styles (size / line height). */
   --t-caption2: 11px; /* 13 */
@@ -55,39 +58,42 @@
   --sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --display: var(--font-display), "Arial Narrow", var(--sans);
   --mono: var(--font-mono), ui-monospace, "SF Mono", Consolas, monospace;
-  color-scheme: light;
-}
-
-/* Dark palette. Applies when the visitor picks Dark with the theme button
-   (data-theme="dark"), or when they have not picked and the device is dark.
-   Picking Light (data-theme="light") always wins over the device setting. */
-:root[data-theme="dark"] {
-  --bg: #000000;
-  --bg-2: #1c1c1e;
-  --label: #ffffff;
-  --label-2: #98989d;
-  --label-3: #636366;
-  --separator: #38383a;
-  --link: #5cb8ff;
-  --success: #4ad968;
-  --error: #ff6165;
-  --link-tint: rgba(92, 184, 255, 0.14);
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #000000;
-    --bg-2: #1c1c1e;
-    --label: #ffffff;
-    --label-2: #98989d;
-    --label-3: #636366;
-    --separator: #38383a;
-    --link: #5cb8ff;
-    --success: #4ad968;
-    --error: #ff6165;
-    --link-tint: rgba(92, 184, 255, 0.14);
-    color-scheme: dark;
+:root[data-theme="light"] {
+  --bg: #f7f9fc;
+  --bg-2: #ffffff;
+  --bg-3: #eef2f8;
+  --label: #0f172a;
+  --label-2: #4b5a73;
+  --label-3: #8a97ad;
+  --separator: #d6dde8;
+  --link: #0f766e;
+  --link-ink: #ffffff;
+  --success: #15803d;
+  --error: #b91c1c;
+  --link-tint: rgba(15, 118, 110, 0.1);
+  --scrim: rgba(15, 23, 42, 0.6);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+  --bg: #f7f9fc;
+  --bg-2: #ffffff;
+  --bg-3: #eef2f8;
+  --label: #0f172a;
+  --label-2: #4b5a73;
+  --label-3: #8a97ad;
+  --separator: #d6dde8;
+  --link: #0f766e;
+  --link-ink: #ffffff;
+  --success: #15803d;
+  --error: #b91c1c;
+  --link-tint: rgba(15, 118, 110, 0.1);
+  --scrim: rgba(15, 23, 42, 0.6);
+  color-scheme: light;
   }
 }
 
@@ -1760,5 +1766,413 @@ a:hover {
 
   .robot-eye {
     animation: none;
+  }
+}
+
+/* ===================================================================
+   v3 skin. Layout after the two-column engineer portfolio (sticky intro and
+   section links on the left, content on the right), navy surfaces, one accent.
+   Content and its order are unchanged.
+   =================================================================== */
+
+.home {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  gap: var(--s-11);
+  align-items: start;
+}
+
+.home-main {
+  min-width: 0;
+}
+
+.home-main .page {
+  max-width: none;
+  padding-inline: 0;
+}
+
+/* Sidebar */
+
+.side {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-block: var(--s-10) var(--s-8);
+}
+
+.side-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-display-s);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.side-name a {
+  color: var(--label);
+  text-decoration: none;
+}
+
+.side-role {
+  margin-top: var(--s-3);
+  font-size: var(--t-title3);
+  line-height: 25px;
+}
+
+.side-spec {
+  margin-top: var(--s-2);
+  font-size: var(--t-caption1);
+  line-height: 16px;
+  color: var(--label-2);
+}
+
+.side-headline {
+  margin-top: var(--s-7);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 2.6vw, 36px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.side-headline s {
+  color: var(--label-2);
+  text-decoration-thickness: 0.08em;
+}
+
+.side-headline em {
+  font-style: normal;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.12em;
+}
+
+.side-nav {
+  margin-top: var(--s-9);
+}
+
+.side-nav ol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.side-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: var(--target);
+  font-family: var(--mono);
+  font-size: var(--t-caption1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label-2);
+  text-decoration: none;
+}
+
+.side-nav-line {
+  display: block;
+  width: 32px;
+  height: var(--hairline);
+  background: var(--label-3);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.side-nav a:hover,
+.side-nav a.on {
+  color: var(--label);
+}
+
+.side-nav a:hover .side-nav-line,
+.side-nav a.on .side-nav-line {
+  width: 64px;
+  background: var(--link);
+}
+
+.side-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-5);
+  margin-top: auto;
+  padding-top: var(--s-8);
+  font-size: var(--t-footnote);
+}
+
+.side-foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--label-2);
+  text-decoration: none;
+}
+
+.side-foot a:hover {
+  color: var(--link);
+}
+
+.side-foot .theme-toggle {
+  color: var(--label-2);
+}
+
+/* The top bar serves narrow screens and project pages; the sidebar replaces it on the wide home page. */
+@media (min-width: 1069px) {
+  body:has(.home) .topbar {
+    display: none;
+  }
+}
+
+/* Hero body (description, contact, portrait) at the top of the content column. */
+
+.home .hero {
+  padding-block: var(--s-10) var(--s-7);
+  border-bottom: 0;
+}
+
+.home .hero-grid {
+  margin-top: 0;
+}
+
+.hero-desc {
+  color: var(--label-2);
+}
+
+.hero-contact a {
+  color: var(--link);
+  text-decoration-color: transparent;
+}
+
+.hero-contact a:hover {
+  text-decoration-color: currentColor;
+}
+
+.portrait-frame {
+  border-color: var(--separator);
+  border-radius: var(--radius);
+}
+
+/* Surfaces: panels with a hairline border and an accent border on hover. No shadows. */
+
+.facts {
+  gap: var(--s-4);
+}
+
+.fact,
+.fact + .fact {
+  padding: var(--s-5);
+  border: var(--hairline) solid var(--separator);
+  border-radius: var(--radius);
+  background: var(--bg-2);
+}
+
+.fact-value {
+  color: var(--link);
+}
+
+.compress {
+  border-top: var(--hairline) solid var(--separator);
+}
+
+.compress-head .mono-num {
+  color: var(--link);
+}
+
+.compress-fill {
+  background: var(--link);
+}
+
+.unit-keep {
+  border-color: var(--link);
+}
+
+.unit-fill {
+  background: var(--link);
+}
+
+.after,
+.reg-result,
+.feat-value,
+.result-after {
+  color: var(--link);
+}
+
+.sec-idx {
+  color: var(--link);
+}
+
+.sec-head {
+  border-bottom-color: var(--separator);
+}
+
+.feat {
+  padding: var(--s-6);
+  border: var(--hairline) solid var(--separator);
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.feat + .feat {
+  margin-top: var(--s-4);
+}
+
+.feat:first-child {
+  padding-top: var(--s-6);
+}
+
+.feat:hover {
+  border-color: var(--link);
+  background: var(--bg-3);
+}
+
+.feat-side {
+  border-top-color: var(--separator);
+}
+
+.feat-title a:hover {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.feat-link {
+  color: var(--link);
+}
+
+.reg-row {
+  padding: var(--s-5);
+  border: var(--hairline) solid transparent;
+  border-bottom-color: var(--separator);
+  border-radius: var(--radius);
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.25s ease;
+}
+
+.reg-row:hover {
+  background: var(--bg-2);
+  border-color: var(--separator);
+}
+
+.reg-row:hover .reg-title {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.reg-preview {
+  border-radius: var(--radius);
+  border-color: var(--separator);
+  background: var(--bg-3);
+}
+
+.depth th {
+  color: var(--label);
+}
+
+.depth-link a {
+  color: var(--link);
+  text-decoration-color: transparent;
+}
+
+.depth-link a:hover {
+  text-decoration-color: currentColor;
+}
+
+.entry-org {
+  color: var(--link);
+}
+
+.cert {
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.cert:hover {
+  border-color: var(--link);
+}
+
+.contact-note {
+  color: var(--label-2);
+}
+
+.contact-mail:hover {
+  color: var(--link);
+}
+
+/* Project pages */
+
+.topbar {
+  background: var(--bg);
+}
+
+.doc-meta a {
+  color: var(--link);
+}
+
+.results {
+  border-radius: var(--radius);
+  border: var(--hairline) solid var(--separator);
+  background: var(--bg-2);
+  padding-inline: var(--s-5);
+}
+
+.result-before {
+  color: var(--label-2);
+}
+
+.pipe-stage {
+  border-radius: var(--radius);
+  background: var(--bg-2);
+}
+
+.pipe-stage:first-child,
+.pipe-stage:last-child {
+  border-color: var(--link);
+  background: var(--bg-2);
+}
+
+.pipe-num {
+  color: var(--link);
+}
+
+.decision-idx {
+  color: var(--link);
+}
+
+.story-block h3 .robot,
+.story-block h3 .web-icon {
+  color: var(--link);
+}
+
+.next {
+  border-radius: var(--radius);
+}
+
+.next:hover .next-title {
+  color: var(--link);
+  text-decoration: none;
+}
+
+/* Narrow screens: the sidebar becomes a plain intro block on top. */
+
+@media (max-width: 1068px) {
+  .home {
+    display: block;
+  }
+
+  .side {
+    position: static;
+    min-height: 0;
+    padding-block: var(--s-8) 0;
+  }
+
+  .side-nav,
+  .side-foot {
+    display: none;
+  }
+
+  .home .hero {
+    padding-top: var(--s-7);
   }
 }

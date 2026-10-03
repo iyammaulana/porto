@@ -5,7 +5,7 @@ import Featured from "@/components/Featured";
 import Registry from "@/components/Registry";
 import Portrait from "@/components/Portrait";
 import { Section } from "@/components/Section";
-import SplitHeading from "@/components/SplitHeading";
+import Sidebar from "@/components/Sidebar";
 import Staffing from "@/components/Staffing";
 import { certifications, depth, education, experience, profile, projects, skills } from "@/data/site";
 
@@ -14,24 +14,11 @@ const others = projects.filter((p) => !p.featured);
 
 export default function Home() {
   return (
-    <main>
+    <main className="home page">
+      <Sidebar />
+
+      <div className="home-main">
       <header className="hero page">
-        <h1 className="hero-name">{profile.name}</h1>
-        <p className="hero-role">{profile.role}</p>
-        <p className="hero-specialties mono">
-          {[...profile.specialties, `${profile.company}, Jakarta`].join(" · ")}
-        </p>
-
-        {/* Two fixed lines on tablet and up. */}
-        <SplitHeading className="hero-headline" immediate>
-          <span className="hero-line">
-            I turn <s>hours</s> of banking
-          </span>{" "}
-          <span className="hero-line">
-            operations into <em>minutes</em>.
-          </span>
-        </SplitHeading>
-
         <div className="hero-grid">
           <div className="hero-copy">
             <p className="hero-desc">{profile.description}</p>
@@ -170,6 +157,7 @@ export default function Home() {
           </a>
         </p>
       </section>
+      </div>
     </main>
   );
 }
