@@ -915,7 +915,7 @@ a:hover {
 }
 
 .reg-preview td:first-child {
-  width: 56px;
+  width: 96px;
   color: var(--label-2);
 }
 

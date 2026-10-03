@@ -5,8 +5,8 @@ import Link from "next/link";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "motion/react";
 import type { Project } from "@/data/site";
 
-// Process list. On devices with a mouse, hovering a row shows that process's
-// robot log next to the cursor, in place of a thumbnail.
+// Process list. On devices with a mouse, hovering a row shows the stack that
+// process is built with, next to the cursor, in place of a thumbnail.
 // `start` continues the numbering after the featured processes.
 export default function Registry({ projects, start = 0 }: { projects: Project[]; start?: number }) {
   const [active, setActive] = useState<number | null>(null);
@@ -72,13 +72,10 @@ export default function Registry({ projects, start = 0 }: { projects: Project[];
               </p>
               <table>
                 <tbody>
-                  {preview.logs[0].steps.slice(0, 5).map((s, i) => (
-                    <tr key={i}>
-                      <td>{s.actor}</td>
-                      <td>
-                        {s.branch && <b>[{s.branch}] </b>}
-                        {s.text}
-                      </td>
+                  {(preview.stackGroups ?? [{ group: "Stack", items: preview.stack }]).map((g) => (
+                    <tr key={g.group}>
+                      <td>{g.group}</td>
+                      <td>{g.items.join(" · ")}</td>
                     </tr>
                   ))}
                 </tbody>

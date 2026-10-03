@@ -580,8 +580,8 @@ export const projects: Project[] = [
     title: "Reconciliation Engine",
     kind: "RPA + Web app",
     summary:
-      "A reconciliation engine for BI-Fast, QR, and Biller that acts on its own results. Matched transactions close, and failed ones are posted or refunded automatically.",
-    role: "Developer: reconciliation engine across BI-Fast, QR, and Biller",
+      "A reconciliation engine for BI-Fast, QR, and Biller. Matched transactions close on their own; unmatched ones go to a maker and an approver for adjustment or refund.",
+    role: "A team effort, not a solo build. I built the robot that pulls BI-Fast data from Bank Indonesia's portal into the database, the Laravel engine that imports host data, and the dashboards. A teammate built the matching engine itself.",
     since: "2022",
     status: "RUNNING",
     statusNote: "Live since the day BI-Fast launched in Indonesia.",
@@ -594,7 +594,7 @@ export const projects: Project[] = [
       { label: "Build time", value: "1–2 months for the BI-Fast module" },
     ],
     results: [
-      { measure: "Manual reconciliation automated", after: "85%" },
+      { measure: "Of the process automated; posting stays with a maker and an approver", after: "85%" },
       { measure: "Transactions per day", after: "250K+" },
       { measure: "From pull to result on the dashboard", after: "~30 min" },
     ],
@@ -610,7 +610,7 @@ export const projects: Project[] = [
         {
           title: "Reconciliation engine and dashboard",
           icon: "web",
-          body: "An import engine loads host data from SFTP into its own staging database. The two sides are reconciled, matched transactions close, and failed ones are posted in real time or refunded automatically. A Laravel dashboard shows the match and unmatch results about 30 minutes after each pull.",
+          body: "An import engine loads host data from SFTP into its own staging database. The two sides are reconciled: matched transactions close on their own, and unmatched ones are listed for a maker and an approver to adjust or refund. A Laravel dashboard shows the results about 30 minutes after each pull.",
         },
       ],
     },
@@ -1062,12 +1062,12 @@ export const projects: Project[] = [
     ],
     results: [
       { measure: "Per report", before: "10 min", after: "3 min" },
-      { measure: "People preparing reports", before: "1", after: "0" },
+      { measure: "People preparing each report", before: "1", after: "0" },
       { measure: "Payment system status checks", after: "3× a day" },
     ],
     story: {
       problem:
-        "Treasury and IT project management ran a set of recurring monitoring and reporting tasks by hand: check a payment system's status, correct trade dates, pool corporate card transactions, report project progress, pull mutual fund data, and prepare three regulatory reports for OJK. Each one meant logging in somewhere, pulling data, building the report, and sending or filing it, about 10 minutes per report, from three times a day to monthly, with one person doing it all.",
+        "Treasury and IT project management ran a set of recurring monitoring and reporting tasks by hand: check a payment system's status, correct trade dates, pool corporate card transactions, report project progress, pull mutual fund data, and prepare three regulatory reports for OJK. Each one meant logging in somewhere, pulling data, building the report, and sending or filing it, about 10 minutes per report, from three times a day to monthly, each report with one person behind it in its own team.",
       pipeline: {
         title: "Regulatory report, from source to inbox",
         stages: [
